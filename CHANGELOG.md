@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## [Unreleased]
+### Changed
+* [Active support for PHP 7.4 ends Q4 2021](https://www.php.net/supported-versions.php). This SDK will therefore not be supported on PHP 7.x anymore.
 
 ### Removed
 * Removed deprecated methods

@@ -6,7 +6,7 @@ Overview
 Requirements
 ************
 
-* PHP >= 7.4
+* PHP >= 8.0
 * The `mbstring PHP extension <http://php.net/manual/en/book.mbstring.php>`_
 * A Firebase project - create a new project in the `Firebase console <https://firebase.google.com/console/>`_,
   if you don't already have one.
@@ -100,7 +100,7 @@ Guidelines
 ==========
 
 #. The SDK utilizes PSR-4, PSR-7 and PSR-12.
-#. This SDK has a minimum PHP version requirement of PHP 7.4.
+#. This SDK has a minimum PHP version requirement of PHP 8.0.
 #. All pull requests should include unit tests to ensure the change works as
    expected and to prevent regressions.
 
