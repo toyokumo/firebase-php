@@ -5,6 +5,7 @@
 * [Active support for PHP 7.4 ends Q4 2021](https://www.php.net/supported-versions.php). This SDK will therefore not be supported on PHP 7.x anymore.
 
 ### Removed
+* Dropped support for Guzzle 6.x
 * Removed deprecated methods
   * `Auth::setCustomUserAttributes()`, use `Auth::setCustomUserClaims()` instead
   * `Auth::deleteCustomUserAttributes()`, use `Auth::setCustomUserClaims()` with null values instead
