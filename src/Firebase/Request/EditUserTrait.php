@@ -10,6 +10,7 @@ use Kreait\Firebase\Value\Email;
 use Kreait\Firebase\Value\PhoneNumber;
 use Kreait\Firebase\Value\Uid;
 use Kreait\Firebase\Value\Url;
+use Stringable;
 
 /**
  * @codeCoverageIgnore
@@ -30,10 +31,8 @@ trait EditUserTrait
      * @param array<string, mixed> $properties
      *
      * @throws InvalidArgumentException when invalid properties have been provided
-     *
-     * @return static
      */
-    protected static function withEditableProperties(self $request, array $properties)
+    protected static function withEditableProperties(self $request, array $properties): static
     {
         foreach ($properties as $key => $value) {
             switch (\mb_strtolower((string) \preg_replace('/[^a-z]/i', '', $key))) {
@@ -107,21 +106,15 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param Uid|mixed $uid
-     */
-    public function withUid($uid): self
+    public function withUid(Stringable|string $uid): static
     {
         $request = clone $this;
-        $request->uid = $uid instanceof Uid ? $uid : new Uid((string) $uid);
+        $request->uid = new Uid((string) $uid);
 
         return $request;
     }
 
-    /**
-     * @param Email|string $email
-     */
-    public function withEmail($email): self
+    public function withEmail(Email|string $email): static
     {
         $request = clone $this;
         $request->email = $email instanceof Email ? $email : new Email($email);
@@ -129,10 +122,7 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param Email|string $email
-     */
-    public function withVerifiedEmail($email): self
+    public function withVerifiedEmail(Email|string $email): static
     {
         $request = clone $this;
         $request->email = $email instanceof Email ? $email : new Email($email);
@@ -141,10 +131,7 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param Email|string $email
-     */
-    public function withUnverifiedEmail($email): self
+    public function withUnverifiedEmail(Email|string $email): static
     {
         $request = clone $this;
         $request->email = $email instanceof Email ? $email : new Email($email);
@@ -153,7 +140,7 @@ trait EditUserTrait
         return $request;
     }
 
-    public function withDisplayName(string $displayName): self
+    public function withDisplayName(string $displayName): static
     {
         $request = clone $this;
         $request->displayName = $displayName;
@@ -161,10 +148,7 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param PhoneNumber|string|null $phoneNumber
-     */
-    public function withPhoneNumber($phoneNumber): self
+    public function withPhoneNumber(Stringable|string|null $phoneNumber): static
     {
         $phoneNumber = $phoneNumber !== null
             ? new PhoneNumber((string) $phoneNumber)
@@ -176,10 +160,7 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param Url|string $url
-     */
-    public function withPhotoUrl($url): self
+    public function withPhotoUrl(Url|string $url): static
     {
         $request = clone $this;
         $request->photoUrl = $url instanceof Url ? $url : Url::fromValue($url);
@@ -187,7 +168,7 @@ trait EditUserTrait
         return $request;
     }
 
-    public function markAsDisabled(): self
+    public function markAsDisabled(): static
     {
         $request = clone $this;
         $request->markAsEnabled = null;
@@ -196,7 +177,7 @@ trait EditUserTrait
         return $request;
     }
 
-    public function markAsEnabled(): self
+    public function markAsEnabled(): static
     {
         $request = clone $this;
         $request->markAsDisabled = null;
@@ -205,7 +186,7 @@ trait EditUserTrait
         return $request;
     }
 
-    public function markEmailAsVerified(): self
+    public function markEmailAsVerified(): static
     {
         $request = clone $this;
         $request->emailIsVerified = true;
@@ -213,7 +194,7 @@ trait EditUserTrait
         return $request;
     }
 
-    public function markEmailAsUnverified(): self
+    public function markEmailAsUnverified(): static
     {
         $request = clone $this;
         $request->emailIsVerified = false;
@@ -221,10 +202,7 @@ trait EditUserTrait
         return $request;
     }
 
-    /**
-     * @param ClearTextPassword|string $clearTextPassword
-     */
-    public function withClearTextPassword($clearTextPassword): self
+    public function withClearTextPassword(ClearTextPassword|string $clearTextPassword): static
     {
         $request = clone $this;
         $request->clearTextPassword = $clearTextPassword instanceof ClearTextPassword
@@ -247,14 +225,14 @@ trait EditUserTrait
         }
 
         return \array_filter([
-            'localId' => $this->uid,
+            'localId' => $this->uid?->__toString(),
             'disableUser' => $disableUser,
             'displayName' => $this->displayName,
-            'email' => $this->email,
+            'email' => $this->email?->__toString(),
             'emailVerified' => $this->emailIsVerified,
-            'phoneNumber' => $this->phoneNumber,
-            'photoUrl' => $this->photoUrl,
-            'password' => $this->clearTextPassword,
+            'phoneNumber' => $this->phoneNumber?->__toString(),
+            'photoUrl' => $this->photoUrl?->__toString(),
+            'password' => $this->clearTextPassword?->__toString(),
         ], static fn ($value) => $value !== null);
     }
 

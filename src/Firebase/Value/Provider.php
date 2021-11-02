@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Value;
 
-class Provider implements \JsonSerializable
+class Provider implements \JsonSerializable, \Stringable
 {
     public const ANONYMOUS = 'anonymous';
     public const CUSTOM = 'custom';
@@ -17,14 +17,11 @@ class Provider implements \JsonSerializable
     public const TWITTER = 'twitter.com';
     public const APPLE = 'apple.com';
 
-    private string $value;
-
     /**
      * @internal
      */
-    public function __construct(string $value)
+    public function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
     public function __toString(): string
@@ -37,10 +34,7 @@ class Provider implements \JsonSerializable
         return $this->value;
     }
 
-    /**
-     * @param self|string $other
-     */
-    public function equalsTo($other): bool
+    public function equalsTo(self|string $other): bool
     {
         return $this->value === (string) $other;
     }

@@ -18,16 +18,11 @@ use Throwable;
  */
 class ApiClient
 {
-    private ClientInterface $client;
-    private MessagingApiExceptionConverter $errorHandler;
-
     /**
      * @internal
      */
-    public function __construct(ClientInterface $client, MessagingApiExceptionConverter $errorHandler)
+    public function __construct(private ClientInterface $client, private MessagingApiExceptionConverter $errorHandler)
     {
-        $this->client = $client;
-        $this->errorHandler = $errorHandler;
     }
 
     /**
@@ -39,7 +34,7 @@ class ApiClient
     public function send(RequestInterface $request, array $options = []): ResponseInterface
     {
         try {
-            return $this->client->send($request);
+            return $this->client->send($request, $options);
         } catch (Throwable $e) {
             throw $this->errorHandler->convertException($e);
         }

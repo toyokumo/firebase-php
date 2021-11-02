@@ -59,7 +59,7 @@ class ServiceAccount
      *
      * @throws InvalidArgumentException
      */
-    public static function fromValue($value): self
+    public static function fromValue(mixed $value): self
     {
         if ($value instanceof self) {
             return $value;

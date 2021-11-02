@@ -9,9 +9,6 @@ use Psr\Http\Message\ResponseInterface;
 
 final class DeleteUsersResult
 {
-    private int $failureCount;
-    private int $successCount;
-
     /**
      * @var array{
      *             index: int,
@@ -22,16 +19,14 @@ final class DeleteUsersResult
     private array $rawErrors;
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     index: int,
      *     localId: string,
      *     message: string
      * } $rawErrors
      */
-    private function __construct(int $successCount, int $failureCount, array $rawErrors)
+    private function __construct(private int $successCount, private int $failureCount, array $rawErrors)
     {
-        $this->successCount = $successCount;
-        $this->failureCount = $failureCount;
         $this->rawErrors = $rawErrors;
     }
 

@@ -40,7 +40,7 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     token?: string,
      *     topic?: string,
      *     condition?: string,
@@ -142,11 +142,11 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param MessageData|array<array-key, mixed> $data
+     * @param array<array-key, scalar|\Stringable> $data
      *
      * @throws InvalidArgumentException
      */
-    public function withData($data): self
+    public function withData(MessageData|array $data): self
     {
         $new = clone $this;
         $new->data = $data instanceof MessageData ? $data : MessageData::fromArray($data);
@@ -155,7 +155,7 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param Notification|array{
+     * @phpstan-param Notification|array{
      *     title?: string,
      *     body?: string,
      *     image?: string
@@ -163,7 +163,7 @@ final class CloudMessage implements Message
      *
      * @throws InvalidArgumentException
      */
-    public function withNotification($notification): self
+    public function withNotification(Notification|array $notification): self
     {
         $new = clone $this;
         $new->notification = $notification instanceof Notification ? $notification : Notification::fromArray($notification);
@@ -172,7 +172,7 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param AndroidConfig|array{
+     * @phpstan-param AndroidConfig|array{
      *     collapse_key?: string,
      *     priority?: 'normal'|'high',
      *     ttl?: string,
@@ -185,7 +185,7 @@ final class CloudMessage implements Message
      *
      * @throws InvalidArgumentException
      */
-    public function withAndroidConfig($config): self
+    public function withAndroidConfig(AndroidConfig|array $config): self
     {
         $new = clone $this;
         $new->androidConfig = $config instanceof AndroidConfig ? $config : AndroidConfig::fromArray($config);
@@ -194,7 +194,7 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param ApnsConfig|array{
+     * @phpstan-param ApnsConfig|array{
      *     headers?: array<string, string>,
      *     payload?: array<string, mixed>,
      *     fcm_options?: array{
@@ -205,7 +205,7 @@ final class CloudMessage implements Message
      *
      * @throws InvalidArgumentException
      */
-    public function withApnsConfig($config): self
+    public function withApnsConfig(ApnsConfig|array $config): self
     {
         $new = clone $this;
         $new->apnsConfig = $config instanceof ApnsConfig ? $config : ApnsConfig::fromArray($config);
@@ -214,7 +214,7 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param WebPushConfig|array{
+     * @phpstan-param WebPushConfig|array{
      *     headers?: array<string, string>,
      *     data?: array<string, string>,
      *     notification?: array<string, mixed>,
@@ -224,7 +224,7 @@ final class CloudMessage implements Message
      *     }
      * } $config
      */
-    public function withWebPushConfig($config): self
+    public function withWebPushConfig(WebPushConfig|array $config): self
     {
         $new = clone $this;
         $new->webPushConfig = $config instanceof WebPushConfig ? $config : WebPushConfig::fromArray($config);
@@ -233,11 +233,11 @@ final class CloudMessage implements Message
     }
 
     /**
-     * @param FcmOptions|array{
+     * @phpstan-param FcmOptions|array{
      *     analytics_label?: string
      * } $options
      */
-    public function withFcmOptions($options): self
+    public function withFcmOptions(FcmOptions|array $options): self
     {
         $new = clone $this;
         $new->fcmOptions = $options instanceof FcmOptions ? $options : FcmOptions::fromArray($options);

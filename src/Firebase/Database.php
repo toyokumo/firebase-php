@@ -16,17 +16,11 @@ class Database implements Contract\Database
 {
     public const SERVER_TIMESTAMP = ['.sv' => 'timestamp'];
 
-    private ApiClient $client;
-
-    private UriInterface $uri;
-
     /**
      * @internal
      */
-    public function __construct(UriInterface $uri, ApiClient $client)
+    public function __construct(private UriInterface $uri, private ApiClient $client)
     {
-        $this->uri = $uri;
-        $this->client = $client;
     }
 
     public function getReference(?string $path = null): Reference
@@ -44,7 +38,7 @@ class Database implements Contract\Database
         }
     }
 
-    public function getReferenceFromUrl($uri): Reference
+    public function getReferenceFromUrl(string|UriInterface $uri): Reference
     {
         $uri = $uri instanceof UriInterface ? $uri : new Uri($uri);
 
@@ -71,7 +65,7 @@ class Database implements Contract\Database
         $this->client->updateRules($this->uri->withPath('/.settings/rules'), $ruleSet);
     }
 
-    public function runTransaction(callable $callable)
+    public function runTransaction(callable $callable): mixed
     {
         $transaction = new Transaction($this->client);
 

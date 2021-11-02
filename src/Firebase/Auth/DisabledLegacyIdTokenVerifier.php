@@ -10,11 +10,8 @@ use Lcobucci\JWT\Token;
 
 final class DisabledLegacyIdTokenVerifier implements Verifier
 {
-    private string $reason;
-
-    public function __construct(string $reason)
+    public function __construct(private string $reason)
     {
-        $this->reason = $reason;
     }
 
     public function verifyIdToken($token): Token

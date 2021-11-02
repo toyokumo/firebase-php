@@ -8,19 +8,11 @@ use Kreait\Firebase\Exception\InvalidArgumentException;
 
 final class Notification implements \JsonSerializable
 {
-    private ?string $title;
-    private ?string $body;
-    private ?string $imageUrl;
-
     /**
      * @throws InvalidArgumentException if both title and body are null
      */
-    private function __construct(?string $title = null, ?string $body = null, ?string $imageUrl = null)
+    private function __construct(private ?string $title = null, private ?string $body = null, private ?string $imageUrl = null)
     {
-        $this->title = $title;
-        $this->body = $body;
-        $this->imageUrl = $imageUrl;
-
         if ($this->title === null && $this->body === null) {
             throw new InvalidArgumentException('The title and body of a notification cannot both be NULL');
         }
@@ -35,7 +27,7 @@ final class Notification implements \JsonSerializable
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     title?: string,
      *     body?: string,
      *     image?: string

@@ -16,14 +16,11 @@ use Traversable;
 
 class RemoteConfig implements Contract\RemoteConfig
 {
-    private ApiClient $client;
-
     /**
      * @internal
      */
-    public function __construct(ApiClient $client)
+    public function __construct(private ApiClient $client)
     {
-        $this->client = $client;
     }
 
     public function get(): Template
@@ -46,7 +43,7 @@ class RemoteConfig implements Contract\RemoteConfig
         return \array_shift($etag) ?: '';
     }
 
-    public function getVersion($versionNumber): Version
+    public function getVersion(VersionNumber|int|string $versionNumber): Version
     {
         $versionNumber = $this->ensureVersionNumber($versionNumber);
 
@@ -59,14 +56,14 @@ class RemoteConfig implements Contract\RemoteConfig
         throw VersionNotFound::withVersionNumber($versionNumber);
     }
 
-    public function rollbackToVersion($versionNumber): Template
+    public function rollbackToVersion(VersionNumber|int|string $versionNumber): Template
     {
         $versionNumber = $this->ensureVersionNumber($versionNumber);
 
         return $this->buildTemplateFromResponse($this->client->rollbackToVersion($versionNumber));
     }
 
-    public function listVersions($query = null): Traversable
+    public function listVersions(array|FindVersions $query = null): Traversable
     {
         $query = $query instanceof FindVersions ? $query : FindVersions::fromArray((array) $query);
         $pageToken = null;
@@ -93,15 +90,12 @@ class RemoteConfig implements Contract\RemoteConfig
     /**
      * @param Template|array<string, mixed> $value
      */
-    private function ensureTemplate($value): Template
+    private function ensureTemplate(Template|array $value): Template
     {
         return $value instanceof Template ? $value : Template::fromArray($value);
     }
 
-    /**
-     * @param VersionNumber|int|string $value
-     */
-    private function ensureVersionNumber($value): VersionNumber
+    private function ensureVersionNumber(VersionNumber|int|string $value): VersionNumber
     {
         return $value instanceof VersionNumber ? $value : VersionNumber::fromValue($value);
     }

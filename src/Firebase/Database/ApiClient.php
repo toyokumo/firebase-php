@@ -18,26 +18,20 @@ use Throwable;
  */
 class ApiClient
 {
-    private ClientInterface $client;
     protected DatabaseApiExceptionConverter $errorHandler;
 
     /**
      * @internal
      */
-    public function __construct(ClientInterface $httpClient)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $httpClient;
         $this->errorHandler = new DatabaseApiExceptionConverter();
     }
 
     /**
-     * @param UriInterface|string $uri
-     *
      * @throws DatabaseException
-     *
-     * @return mixed
      */
-    public function get($uri)
+    public function get(UriInterface|string $uri): mixed
     {
         $response = $this->requestApi('GET', $uri);
 
@@ -47,13 +41,11 @@ class ApiClient
     /**
      * @internal This method should only be used in the context of Database translations
      *
-     * @param UriInterface|string $uri
-     *
      * @throws DatabaseException
      *
      * @return array<string, mixed>
      */
-    public function getWithETag($uri): array
+    public function getWithETag(UriInterface|string $uri): array
     {
         $response = $this->requestApi('GET', $uri, [
             'headers' => [
@@ -71,14 +63,9 @@ class ApiClient
     }
 
     /**
-     * @param UriInterface|string $uri
-     * @param mixed $value
-     *
      * @throws DatabaseException
-     *
-     * @return mixed
      */
-    public function set($uri, $value)
+    public function set(UriInterface|string $uri, mixed $value): mixed
     {
         $response = $this->requestApi('PUT', $uri, ['json' => $value]);
 
@@ -86,16 +73,11 @@ class ApiClient
     }
 
     /**
-     * @internal This method should only be used in the context of Database translations
-     *
-     * @param UriInterface|string $uri
-     * @param mixed $value
+     * @internal This method should only be used in the context of Database transactions
      *
      * @throws DatabaseException
-     *
-     * @return mixed
      */
-    public function setWithEtag($uri, $value, string $etag)
+    public function setWithEtag(UriInterface|string $uri, mixed $value, string $etag): mixed
     {
         $response = $this->requestApi('PUT', $uri, [
             'headers' => [
@@ -110,11 +92,9 @@ class ApiClient
     /**
      * @internal This method should only be used in the context of Database translations
      *
-     * @param UriInterface|string $uri
-     *
      * @throws DatabaseException
      */
-    public function removeWithEtag($uri, string $etag): void
+    public function removeWithEtag(UriInterface|string $uri, string $etag): void
     {
         $this->requestApi('DELETE', $uri, [
             'headers' => [
@@ -124,13 +104,9 @@ class ApiClient
     }
 
     /**
-     * @param UriInterface|string $uri
-     *
      * @throws DatabaseException
-     *
-     * @return mixed
      */
-    public function updateRules($uri, RuleSet $ruleSet)
+    public function updateRules(UriInterface|string $uri, RuleSet $ruleSet): mixed
     {
         $response = $this->requestApi('PUT', $uri, [
             'body' => JSON::encode($ruleSet, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
@@ -140,12 +116,9 @@ class ApiClient
     }
 
     /**
-     * @param UriInterface|string $uri
-     * @param mixed $value
-     *
      * @throws DatabaseException
      */
-    public function push($uri, $value): string
+    public function push(UriInterface|string $uri, mixed $value): string
     {
         $response = $this->requestApi('POST', $uri, ['json' => $value]);
 
@@ -153,33 +126,29 @@ class ApiClient
     }
 
     /**
-     * @param UriInterface|string $uri
-     *
      * @throws DatabaseException
      */
-    public function remove($uri): void
+    public function remove(UriInterface|string $uri): void
     {
         $this->requestApi('DELETE', $uri);
     }
 
     /**
-     * @param UriInterface|string $uri
      * @param array<mixed> $values
      *
      * @throws DatabaseException
      */
-    public function update($uri, array $values): void
+    public function update(UriInterface|string $uri, array $values): void
     {
         $this->requestApi('PATCH', $uri, ['json' => $values]);
     }
 
     /**
-     * @param UriInterface|string $uri
      * @param array<string, mixed>|null $options
      *
      * @throws DatabaseException
      */
-    private function requestApi(string $method, $uri, ?array $options = null): ResponseInterface
+    private function requestApi(string $method, UriInterface|string $uri, ?array $options = null): ResponseInterface
     {
         $options ??= [];
 

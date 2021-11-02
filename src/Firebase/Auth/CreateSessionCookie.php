@@ -14,22 +14,11 @@ final class CreateSessionCookie
     private const FIVE_MINUTES = 'PT5M';
     private const TWO_WEEKS = 'P14D';
 
-    private string $idToken;
-    private DateInterval $ttl;
-    private Clock $clock;
-
-    private function __construct(string $idToken, DateInterval $ttl, Clock $clock)
+    private function __construct(private string $idToken, private DateInterval $ttl, private Clock $clock)
     {
-        $this->idToken = $idToken;
-        $this->ttl = $ttl;
-        $this->clock = $clock;
     }
 
-    /**
-     * @param Token|string $idToken
-     * @param int|DateInterval $ttl
-     */
-    public static function forIdToken($idToken, $ttl, ?Clock $clock = null): self
+    public static function forIdToken(Token|string $idToken, int|DateInterval $ttl, ?Clock $clock = null): self
     {
         $clock ??= new Clock\SystemClock();
 
@@ -60,11 +49,9 @@ final class CreateSessionCookie
     }
 
     /**
-     * @param int|DateInterval $ttl
-     *
      * @throws InvalidArgumentException
      */
-    private static function assertValidDuration($ttl, Clock $clock): DateInterval
+    private static function assertValidDuration(int|DateInterval $ttl, Clock $clock): DateInterval
     {
         if (\is_int($ttl)) {
             if ($ttl < 0) {

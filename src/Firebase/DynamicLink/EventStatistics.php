@@ -33,15 +33,11 @@ final class EventStatistics implements Countable, IteratorAggregate
     // Re-opens of an app
     public const TYPE_APP_RE_OPEN = 'APP_RE_OPEN';
 
-    /** @var array<int, array<string, string>> */
-    private array $events;
-
     /**
      * @param array<int, array<string, string>> $events
      */
-    private function __construct(array $events)
+    private function __construct(private array $events)
     {
-        $this->events = $events;
     }
 
     /**

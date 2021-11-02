@@ -16,11 +16,9 @@ use Psr\Http\Message\UriInterface;
  *
  * @see https://firebase.google.com/docs/reference/js/firebase.database.Reference
  */
-class Reference
+class Reference implements \Stringable
 {
     private UriInterface $uri;
-
-    private ApiClient $apiClient;
 
     private Validator $validator;
 
@@ -29,13 +27,12 @@ class Reference
      *
      * @throws InvalidArgumentException if the reference URI is invalid
      */
-    public function __construct(UriInterface $uri, ApiClient $apiClient, ?Validator $validator = null)
+    public function __construct(UriInterface $uri, private ApiClient $apiClient, ?Validator $validator = null)
     {
         $this->validator = $validator ?? new Validator();
         $this->validator->validateUri($uri);
 
         $this->uri = $uri;
-        $this->apiClient = $apiClient;
     }
 
     /**
@@ -165,10 +162,8 @@ class Reference
      * Creates a Query with the specified starting point (inclusive).
      *
      * @see Query::startAt()
-     *
-     * @param scalar $value
      */
-    public function startAt($value): Query
+    public function startAt(float|bool|int|string $value): Query
     {
         return $this->query()->startAt($value);
     }
@@ -177,10 +172,8 @@ class Reference
      * Creates a Query with the specified starting point (exclusive).
      *
      * @see Query::startAfter()
-     *
-     * @param scalar $value
      */
-    public function startAfter($value): Query
+    public function startAfter(float|bool|int|string $value): Query
     {
         return $this->query()->startAfter($value);
     }
@@ -189,10 +182,8 @@ class Reference
      * Creates a Query with the specified ending point (inclusive).
      *
      * @see Query::endAt()
-     *
-     * @param scalar $value
      */
-    public function endAt($value): Query
+    public function endAt(float|bool|int|string $value): Query
     {
         return $this->query()->endAt($value);
     }
@@ -201,10 +192,8 @@ class Reference
      * Creates a Query with the specified ending point (exclusive).
      *
      * @see Query::endBefore()
-     *
-     * @param scalar $value
      */
-    public function endBefore($value): Query
+    public function endBefore(float|bool|int|string $value): Query
     {
         return $this->query()->endBefore($value);
     }
@@ -213,10 +202,8 @@ class Reference
      * Creates a Query which includes children which match the specified value.
      *
      * @see Query::equalTo()
-     *
-     * @param scalar $value
      */
-    public function equalTo($value): Query
+    public function equalTo(float|bool|int|string $value): Query
     {
         return $this->query()->equalTo($value);
     }
@@ -254,10 +241,8 @@ class Reference
      * Convenience method for {@see getSnapshot()}->getValue().
      *
      * @throws DatabaseException if the API reported an error
-     *
-     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getSnapshot()->getValue();
     }
@@ -270,11 +255,9 @@ class Reference
      * Passing null for the new value is equivalent to calling {@see remove()}:
      * all data at this location or any child location will be deleted.
      *
-     * @param mixed $value
-     *
      * @throws DatabaseException if the API reported an error
      */
-    public function set($value): self
+    public function set(mixed $value): self
     {
         if ($value === null) {
             $this->apiClient->remove($this->uri);
@@ -312,13 +295,11 @@ class Reference
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Reference#push
      *
-     * @param mixed|null $value
-     *
      * @throws DatabaseException if the API reported an error
      *
      * @return Reference A new reference for the added child
      */
-    public function push($value = null): self
+    public function push(mixed $value = null): self
     {
         $value ??= [];
 

@@ -16,7 +16,7 @@ final class ErrorResponseParser
 
         try {
             $data = JSON::decode($responseBody, true);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return $responseBody;
         }
 
@@ -38,7 +38,7 @@ final class ErrorResponseParser
     {
         try {
             return JSON::decode((string) $response->getBody(), true);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return [];
         }
     }

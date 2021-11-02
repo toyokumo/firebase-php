@@ -46,7 +46,6 @@ use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Http\Middleware;
 use Kreait\Firebase\Project\ProjectId;
 use Kreait\Firebase\Value\Email;
-use Kreait\Firebase\Value\Url;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -115,7 +114,7 @@ class Factory
     /**
      * @param string|array<string, string>|ServiceAccount $value
      */
-    public function withServiceAccount($value): self
+    public function withServiceAccount(string|array|ServiceAccount $value): self
     {
         $serviceAccount = ServiceAccount::fromValue($value);
 
@@ -160,10 +159,7 @@ class Factory
         return $factory;
     }
 
-    /**
-     * @param UriInterface|string $uri
-     */
-    public function withDatabaseUri($uri): self
+    public function withDatabaseUri(UriInterface|string $uri): self
     {
         $factory = clone $this;
         $factory->databaseUri = GuzzleUtils::uriFor($uri);
@@ -271,7 +267,7 @@ class Factory
         if ($credentials = Util::getenv('GOOGLE_APPLICATION_CREDENTIALS')) {
             try {
                 return $this->serviceAccount = ServiceAccount::fromValue($credentials);
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 // Do nothing, continue trying
             }
         }
@@ -281,7 +277,7 @@ class Factory
         if ($credentials = CredentialsLoader::fromWellKnownFile()) {
             try {
                 return $this->serviceAccount = ServiceAccount::fromValue($credentials);
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 // Do nothing, continue trying
             }
         }
@@ -350,7 +346,7 @@ class Factory
             ) {
                 return $this->clientEmail = new Email($clientEmail);
             }
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
 
@@ -508,10 +504,7 @@ class Factory
         return new Messaging($projectId, $messagingApiClient, $appInstanceApiClient);
     }
 
-    /**
-     * @param string|Url|UriInterface|mixed $defaultDynamicLinksDomain
-     */
-    public function createDynamicLinksService($defaultDynamicLinksDomain = null): Contract\DynamicLinks
+    public function createDynamicLinksService(mixed $defaultDynamicLinksDomain = null): Contract\DynamicLinks
     {
         $apiClient = $this->createApiClient();
 
@@ -617,14 +610,14 @@ class Factory
         }
 
         return [
-            'credentialsType' => $credentials !== null ? \get_class($credentials) : null,
+            'credentialsType' => $credentials !== null ? $credentials::class : null,
             'databaseUrl' => $databaseUrl,
             'defaultStorageBucket' => $this->defaultStorageBucket,
-            'projectId' => $projectId !== null ? $projectId->value() : null,
+            'projectId' => $projectId?->value(),
             'serviceAccount' => $serviceAccountInfo,
-            'tenantId' => $this->tenantId !== null ? $this->tenantId->toString() : null,
-            'tokenCacheType' => \get_class($this->authTokenCache),
-            'verifierCacheType' => \get_class($this->verifierCache),
+            'tenantId' => $this->tenantId?->toString(),
+            'tokenCacheType' => $this->authTokenCache::class,
+            'verifierCacheType' => $this->verifierCache::class,
         ];
     }
 
@@ -689,10 +682,8 @@ class Factory
 
     /**
      * @internal
-     *
-     * @param ServiceAccountCredentials|UserRefreshCredentials|AppIdentityCredentials|GCECredentials|CredentialsLoader $credentials
      */
-    public function withGoogleAuthTokenCredentials($credentials): self
+    public function withGoogleAuthTokenCredentials(ServiceAccountCredentials|UserRefreshCredentials|AppIdentityCredentials|GCECredentials|CredentialsLoader $credentials): self
     {
         $factory = clone $this;
         $factory->googleAuthTokenCredentials = $credentials;
@@ -700,10 +691,7 @@ class Factory
         return $factory;
     }
 
-    /**
-     * @return ServiceAccountCredentials|UserRefreshCredentials|AppIdentityCredentials|GCECredentials|CredentialsLoader|null
-     */
-    protected function getGoogleAuthTokenCredentials()
+    protected function getGoogleAuthTokenCredentials(): ?CredentialsLoader
     {
         if ($this->googleAuthTokenCredentials !== null) {
             return $this->googleAuthTokenCredentials;
@@ -721,7 +709,7 @@ class Factory
 
         try {
             return $this->googleAuthTokenCredentials = ApplicationDefaultCredentials::getCredentials(self::API_CLIENT_SCOPES);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }

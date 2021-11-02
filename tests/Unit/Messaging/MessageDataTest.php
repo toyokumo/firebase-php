@@ -57,8 +57,8 @@ final class MessageDataTest extends TestCase
                 ['key' => null],
             ],
             'object with __toString()' => [
-                ['key' => new class() {
-                    public function __toString()
+                ['key' => new class() implements \Stringable {
+                    public function __toString(): string
                     {
                         return 'value';
                     }
@@ -73,12 +73,9 @@ final class MessageDataTest extends TestCase
     /**
      * @return array<string, array<int, array<string, mixed>>>
      */
-    public function invalidData(): array
+    public function invalidData(): iterable
     {
         return [
-            'nested array' => [
-                ['key' => ['sub_key' => 'sub_value']],
-            ],
             // @see https://github.com/kreait/firebase-php/issues/441
             'binary data' => [
                 ['key' => \hex2bin('81612bcffb')], // generated with \openssl_random_pseudo_bytes(5)
@@ -86,12 +83,6 @@ final class MessageDataTest extends TestCase
             'reserved_key_from' => [
                 ['from' => 'any'],
             ],
-            // // According to the docs, "notification" is reserved, but it's still accepted ¯\_(ツ)_/¯
-            /*
-            'reserved_key_notification' => [
-                ['notification' => 'any'],
-            ],
-            */
             'reserved_key_message_type' => [
                 ['message_type' => 'any'],
             ],

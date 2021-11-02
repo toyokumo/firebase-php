@@ -18,7 +18,7 @@ final class FcmOptions implements JsonSerializable
     private array $data;
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     analytics_label?: string
      * } $data
      */
@@ -33,7 +33,7 @@ final class FcmOptions implements JsonSerializable
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     analytics_label?: string
      * } $data
      */

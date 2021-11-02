@@ -6,7 +6,6 @@ namespace Kreait\Firebase\Tests\Unit\Database\Query\Filter;
 
 use GuzzleHttp\Psr7\Uri;
 use Kreait\Firebase\Database\Query\Filter\EndBefore;
-use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Tests\UnitTestCase;
 
 /**
@@ -14,19 +13,10 @@ use Kreait\Firebase\Tests\UnitTestCase;
  */
 final class EndBeforeTest extends UnitTestCase
 {
-    public function testCreateWithInvalidValue(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new EndBefore(null);
-    }
-
     /**
      * @dataProvider valueProvider
-     *
-     * @param mixed $given
      */
-    public function testModifyUri($given, string $expected): void
+    public function testModifyUri(float|bool|int|string $given, string $expected): void
     {
         $filter = new EndBefore($given);
 

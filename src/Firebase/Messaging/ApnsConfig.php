@@ -16,19 +16,8 @@ final class ApnsConfig implements JsonSerializable
     private const PRIORITY_CONSERVE_POWER = '5';
     private const PRIORITY_IMMEDIATE = '10';
 
-    /** @var array{
-     *      headers?: array<string, string>,
-     *      payload?: array<string, mixed>,
-     *      fcm_options?: array{
-     *          analytics_label?: string,
-     *          image?: string
-     *      }
-     * }
-     */
-    private array $config;
-
     /**
-     * @param array{
+     * @phpstan-param array{
      *      headers?: array<string, string>,
      *      payload?: array<string, mixed>,
      *      fcm_options?: array{
@@ -37,9 +26,8 @@ final class ApnsConfig implements JsonSerializable
      *      }
      * } $config
      */
-    private function __construct(array $config)
+    private function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     public static function new(): self
@@ -48,7 +36,7 @@ final class ApnsConfig implements JsonSerializable
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *      headers?: array<string, string>,
      *      payload?: array<string, mixed>,
      *      fcm_options?: array{

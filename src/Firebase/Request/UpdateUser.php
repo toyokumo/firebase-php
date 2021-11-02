@@ -66,21 +66,12 @@ final class UpdateUser implements Request
                 case 'deleteattribute':
                 case 'deleteattributes':
                     foreach ((array) $value as $deleteAttribute) {
-                        switch (\mb_strtolower(\preg_replace('/[^a-z]/i', '', $deleteAttribute))) {
-                            case 'displayname':
-                                $request = $request->withRemovedDisplayName();
-
-                                break;
-                            case 'photo':
-                            case 'photourl':
-                                $request = $request->withRemovedPhotoUrl();
-
-                                break;
-                            case 'email':
-                                $request = $request->withRemovedEmail();
-
-                                break;
-                        }
+                        $request = match (\mb_strtolower(\preg_replace('/[^a-z]/i', '', $deleteAttribute))) {
+                            'displayname' => $request->withRemovedDisplayName(),
+                            'photo', 'photourl' => $request->withRemovedPhotoUrl(),
+                            'email' => $request->withRemovedEmail(),
+                            default => $request,
+                        };
                     }
 
                     break;
@@ -128,10 +119,7 @@ final class UpdateUser implements Request
         return $request->withRemovedProvider('phone');
     }
 
-    /**
-     * @param Provider|string $provider
-     */
-    public function withRemovedProvider($provider): self
+    public function withRemovedProvider(Provider|string $provider): self
     {
         $provider = $provider instanceof Provider ? $provider : new Provider($provider);
 

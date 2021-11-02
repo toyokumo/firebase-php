@@ -31,13 +31,7 @@ final class RequestWithSubRequests implements HasSubRequests, RequestInterface
 
     private AppendStream $body;
 
-    private Requests $subRequests;
-
-    /**
-     * @param string|UriInterface $uri
-     * @param string $version Protocol version
-     */
-    public function __construct($uri, Requests $subRequests, string $version = '1.1')
+    public function __construct(UriInterface|string $uri, private Requests $subRequests, string $version = '1.1')
     {
         $this->boundary = \sha1(\uniqid('', true));
 
@@ -46,8 +40,6 @@ final class RequestWithSubRequests implements HasSubRequests, RequestInterface
         ];
 
         $this->body = new AppendStream();
-
-        $this->subRequests = $subRequests;
 
         foreach ($subRequests as $request) {
             $this->appendPartForSubRequest($request);

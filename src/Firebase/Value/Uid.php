@@ -6,7 +6,7 @@ namespace Kreait\Firebase\Value;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-class Uid implements \JsonSerializable
+class Uid implements \JsonSerializable, \Stringable
 {
     private string $value;
 
@@ -22,7 +22,7 @@ class Uid implements \JsonSerializable
         $this->value = $value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -32,10 +32,7 @@ class Uid implements \JsonSerializable
         return $this->value;
     }
 
-    /**
-     * @param self|string $other
-     */
-    public function equalsTo($other): bool
+    public function equalsTo(self|string $other): bool
     {
         return $this->value === (string) $other;
     }

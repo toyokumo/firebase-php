@@ -6,13 +6,10 @@ namespace Kreait\Firebase\Messaging;
 
 use Kreait\Firebase\Exception\Messaging\InvalidArgument;
 
-final class Topic implements \JsonSerializable
+final class Topic implements \JsonSerializable, \Stringable
 {
-    private string $value;
-
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
     public static function fromValue(string $value): self

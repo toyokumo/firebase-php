@@ -9,10 +9,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 abstract class UnitTestCase extends FirebaseTestCase
 {
-    /**
-     * @return ServiceAccount|MockObject
-     */
-    protected function createServiceAccountMock()
+    protected function createServiceAccountMock(): ServiceAccount|MockObject
     {
         $mock = $this->createMock(ServiceAccount::class);
 

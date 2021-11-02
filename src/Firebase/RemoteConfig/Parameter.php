@@ -8,22 +8,18 @@ use Kreait\Firebase\Exception\InvalidArgumentException;
 
 class Parameter implements \JsonSerializable
 {
-    private string $name;
     private string $description = '';
-    private DefaultValue $defaultValue;
+
     /** @var ConditionalValue[] */
     private array $conditionalValues = [];
 
-    private function __construct(string $name, DefaultValue $defaultValue)
-    {
-        $this->name = $name;
-        $this->defaultValue = $defaultValue;
+    private function __construct(
+        private string $name,
+        private DefaultValue $defaultValue
+    ) {
     }
 
-    /**
-     * @param DefaultValue|string|mixed $defaultValue
-     */
-    public static function named(string $name, $defaultValue = null): self
+    public static function named(string $name, DefaultValue|string $defaultValue = null): self
     {
         if ($defaultValue === null) {
             $defaultValue = DefaultValue::none();
@@ -54,10 +50,7 @@ class Parameter implements \JsonSerializable
         return $parameter;
     }
 
-    /**
-     * @param DefaultValue|string $defaultValue
-     */
-    public function withDefaultValue($defaultValue): self
+    public function withDefaultValue(DefaultValue|string $defaultValue): self
     {
         $defaultValue = $defaultValue instanceof DefaultValue ? $defaultValue : DefaultValue::with($defaultValue);
 
@@ -89,19 +82,29 @@ class Parameter implements \JsonSerializable
     }
 
     /**
-     * @return array<string, mixed>
+     * @phpstan-return array{
+     *     description: string,
+     *     defaultValue: array<string, string|bool>,
+     *     conditionalValues?: array<string, array<string, string>>,
+     * }
      */
     public function jsonSerialize(): array
     {
-        $conditionalValues = [];
-        foreach ($this->conditionalValues() as $conditionalValue) {
-            $conditionalValues[$conditionalValue->conditionName()] = $conditionalValue->jsonSerialize();
+        $data = [
+            'description' => $this->description,
+            'defaultValue' => $this->defaultValue->jsonSerialize(),
+        ];
+
+        if ($this->conditionalValues() !== []) {
+            $conditionalValues = [];
+
+            foreach ($this->conditionalValues() as $conditionalValue) {
+                $conditionalValues[$conditionalValue->conditionName()] = $conditionalValue->jsonSerialize();
+            }
+
+            $data['conditionalValues'] = $conditionalValues;
         }
 
-        return \array_filter([
-            'defaultValue' => $this->defaultValue,
-            'conditionalValues' => $conditionalValues,
-            'description' => $this->description,
-        ]);
+        return $data;
     }
 }

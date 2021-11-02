@@ -39,7 +39,7 @@ final class Requests implements IteratorAggregate
     /**
      * @codeCoverageIgnore
      *
-     * @return Traversable<RequestInterface>|RequestInterface[]
+     * @phpstan-return Traversable<RequestInterface>|RequestInterface[]
      */
     public function getIterator(): iterable
     {

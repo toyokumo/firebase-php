@@ -44,7 +44,7 @@ final class CustomTokenViaGoogleIamTest extends IntegrationTestCase
             $this->addToAssertionCount(1);
         } catch (AssertionFailedError $e) {
             $this->fail($e->getMessage());
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->fail('An '.AuthException::class.' should have been thrown');
         }
     }

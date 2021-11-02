@@ -6,7 +6,7 @@ namespace Kreait\Firebase\RemoteConfig;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-class TagColor
+class TagColor implements \Stringable
 {
     public const BLUE = 'BLUE';
     public const BROWN = 'BROWN';
@@ -49,7 +49,7 @@ class TagColor
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

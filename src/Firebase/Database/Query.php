@@ -24,10 +24,8 @@ use Psr\Http\Message\UriInterface;
  *
  * @see https://firebase.google.com/docs/reference/js/firebase.database.Query
  */
-class Query
+class Query implements \Stringable
 {
-    private Reference $reference;
-    private ApiClient $apiClient;
     /** @var Filter[] */
     private array $filters;
     private ?Sorter $sorter = null;
@@ -35,10 +33,10 @@ class Query
     /**
      * @internal
      */
-    public function __construct(Reference $reference, ApiClient $apiClient)
-    {
-        $this->reference = $reference;
-        $this->apiClient = $apiClient;
+    public function __construct(
+        private Reference $reference,
+        private ApiClient $apiClient
+    ) {
         $this->filters = [];
     }
 
@@ -82,10 +80,8 @@ class Query
      * Convenience method for {@see getSnapshot()}->getValue().
      *
      * @throws UnsupportedQuery if an error occurred
-     *
-     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getSnapshot()->getValue();
     }
@@ -97,10 +93,8 @@ class Query
      * the specified value will be included in the query.
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Query#endAt
-     *
-     * @param scalar $value
      */
-    public function endAt($value): self
+    public function endAt(float|bool|int|string $value): self
     {
         return $this->withAddedFilter(new Filter\EndAt($value));
     }
@@ -109,10 +103,8 @@ class Query
      * Creates a Query with the specified ending point (exclusive).
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Query#endbefore
-     *
-     * @param scalar $value
      */
-    public function endBefore($value): self
+    public function endBefore(float|bool|int|string $value): self
     {
         return $this->withAddedFilter(new Filter\EndBefore($value));
     }
@@ -121,10 +113,8 @@ class Query
      * Creates a Query which includes children which match the specified value.
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Query#equalTo
-     *
-     * @param scalar $value
      */
-    public function equalTo($value): self
+    public function equalTo(float|bool|int|string $value): self
     {
         return $this->withAddedFilter(new Filter\EqualTo($value));
     }
@@ -133,10 +123,8 @@ class Query
      * Creates a Query with the specified starting point (inclusive).
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Query#startAt
-     *
-     * @param scalar $value
      */
-    public function startAt($value): self
+    public function startAt(float|bool|int|string $value): self
     {
         return $this->withAddedFilter(new Filter\StartAt($value));
     }
@@ -145,10 +133,8 @@ class Query
      * Creates a Query with the specified starting point (exclusive).
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Query#startafter
-     *
-     * @param scalar $value
      */
-    public function startAfter($value): self
+    public function startAfter(float|bool|int|string $value): self
     {
         return $this->withAddedFilter(new Filter\StartAfter($value));
     }

@@ -23,20 +23,13 @@ use Kreait\Firebase\Exception\InvalidArgumentException;
  */
 class Snapshot
 {
-    private Reference $reference;
-
-    /** @var mixed mixed */
-    private $value;
-
     /**
      * @internal
-     *
-     * @param mixed $value
      */
-    public function __construct(Reference $reference, $value)
-    {
-        $this->reference = $reference;
-        $this->value = $value;
+    public function __construct(
+        private Reference $reference,
+        private mixed $value
+    ) {
     }
 
     /**
@@ -138,10 +131,8 @@ class Snapshot
 
     /**
      * Returns the data contained in this Snapshot.
-     *
-     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }

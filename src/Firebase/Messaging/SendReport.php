@@ -10,16 +10,13 @@ use Throwable;
 
 final class SendReport
 {
-    private MessageTarget $target;
-
     /** @var array<array-key, scalar>|null */
     private ?array $result = null;
     private ?Message $message = null;
     private ?Throwable $error = null;
 
-    private function __construct(MessageTarget $target)
+    private function __construct(private MessageTarget $target)
     {
-        $this->target = $target;
     }
 
     /**
@@ -76,7 +73,7 @@ final class SendReport
     }
 
     /**
-     * @return array<array-key, scalar>|null
+     * @phpstan-return array<array-key, scalar>|null
      */
     public function result(): ?array
     {

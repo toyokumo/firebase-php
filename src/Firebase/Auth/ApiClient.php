@@ -23,18 +23,13 @@ use Throwable;
  */
 class ApiClient
 {
-    private ClientInterface $client;
-    private ?TenantId $tenantId;
-
     private AuthApiExceptionConverter $errorHandler;
 
     /**
      * @internal
      */
-    public function __construct(ClientInterface $client, ?TenantId $tenantId = null)
+    public function __construct(private ClientInterface $client, private ?TenantId $tenantId = null)
     {
-        $this->client = $client;
-        $this->tenantId = $tenantId;
         $this->errorHandler = new AuthApiExceptionConverter();
     }
 
@@ -140,7 +135,7 @@ class ApiClient
      *
      * @throws AuthException
      */
-    public function getAccountInfo($uids): ResponseInterface
+    public function getAccountInfo(string|array $uids): ResponseInterface
     {
         if (!\is_array($uids)) {
             $uids = [$uids];

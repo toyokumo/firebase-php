@@ -32,12 +32,10 @@ interface Database
      *
      * @see https://firebase.google.com/docs/reference/js/firebase.database.Database#refFromURL
      *
-     * @param string|UriInterface $uri
-     *
      * @throws InvalidArgumentException If the URL is invalid
      * @throws OutOfRangeException If the URL is not in the same domain as the current database
      */
-    public function getReferenceFromUrl($uri): Reference;
+    public function getReferenceFromUrl(string|UriInterface $uri): Reference;
 
     /**
      * Retrieve Firebase Database Rules.
@@ -59,8 +57,6 @@ interface Database
 
     /**
      * @param callable(\Kreait\Firebase\Database\Transaction $transaction):mixed $callable
-     *
-     * @return mixed
      */
-    public function runTransaction(callable $callable);
+    public function runTransaction(callable $callable): mixed;
 }

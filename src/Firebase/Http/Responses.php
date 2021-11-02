@@ -24,7 +24,7 @@ final class Responses implements IteratorAggregate
     /**
      * @codeCoverageIgnore
      *
-     * @return Traversable<ResponseInterface>|ResponseInterface[]
+     * @phpstan-return Traversable<ResponseInterface>|ResponseInterface[]
      */
     public function getIterator(): iterable
     {

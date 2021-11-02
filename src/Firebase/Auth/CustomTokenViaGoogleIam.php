@@ -20,20 +20,10 @@ use Throwable;
 
 class CustomTokenViaGoogleIam implements Generator
 {
-    private string $clientEmail;
-
-    private ClientInterface $client;
-
     private Configuration $config;
 
-    private ?TenantId $tenantId;
-
-    public function __construct(string $clientEmail, ClientInterface $client, ?TenantId $tenantId = null)
+    public function __construct(private string $clientEmail, private ClientInterface $client, private ?TenantId $tenantId = null)
     {
-        $this->clientEmail = $clientEmail;
-        $this->client = $client;
-        $this->tenantId = $tenantId;
-
         $this->config = Configuration::forUnsecuredSigner();
     }
 

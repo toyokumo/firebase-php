@@ -22,7 +22,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         __DIR__.'/tests',
         __FILE__,
     ]);
-    $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_74);
+    $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_80);
     $parameters->set(Option::SKIP, [
         ClosureToArrowFunctionRector::class => [
             __DIR__.'/src/Firebase/Http/Middleware.php'

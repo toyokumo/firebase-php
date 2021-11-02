@@ -9,17 +9,8 @@ use JsonSerializable;
 
 final class TopicSubscription implements JsonSerializable
 {
-    private Topic $topic;
-
-    private RegistrationToken $registrationToken;
-
-    private DateTimeImmutable $subscribedAt;
-
-    public function __construct(Topic $topic, RegistrationToken $registrationToken, DateTimeImmutable $subscribedAt)
+    public function __construct(private Topic $topic, private RegistrationToken $registrationToken, private DateTimeImmutable $subscribedAt)
     {
-        $this->topic = $topic;
-        $this->registrationToken = $registrationToken;
-        $this->subscribedAt = $subscribedAt;
     }
 
     public function topic(): Topic

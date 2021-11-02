@@ -11,11 +11,8 @@ use Kreait\Firebase\Util\JSON;
 
 final class GuzzleApiClientHandler implements Handler
 {
-    private ClientInterface $client;
-
-    public function __construct(ClientInterface $client)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $client;
     }
 
     public function handle(CreateSessionCookie $action): string

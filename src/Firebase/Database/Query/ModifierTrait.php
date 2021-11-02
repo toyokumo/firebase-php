@@ -12,10 +12,7 @@ use Psr\Http\Message\UriInterface;
  */
 trait ModifierTrait
 {
-    /**
-     * @param mixed $value
-     */
-    protected function appendQueryParam(UriInterface $uri, string $key, $value): UriInterface
+    protected function appendQueryParam(UriInterface $uri, string $key, mixed $value): UriInterface
     {
         $queryParams = \array_merge(Query::parse($uri->getQuery()), [$key => $value]);
 
@@ -24,7 +21,7 @@ trait ModifierTrait
         return $uri->withQuery($queryString);
     }
 
-    public function modifyValue($value)
+    public function modifyValue(mixed $value): mixed
     {
         return $value;
     }

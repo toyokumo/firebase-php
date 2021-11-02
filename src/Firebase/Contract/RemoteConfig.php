@@ -34,7 +34,7 @@ interface RemoteConfig
      * @throws ValidationFailed if the validation failed
      * @throws RemoteConfigException
      */
-    public function validate($template): void;
+    public function validate(Template|array $template): void;
 
     /**
      * @param Template|array<string, mixed> $template
@@ -43,34 +43,30 @@ interface RemoteConfig
      *
      * @return string The etag value of the published template that can be compared to in later calls
      */
-    public function publish($template): string;
+    public function publish(Template|array $template): string;
 
     /**
      * Returns a version with the given number.
      *
-     * @param VersionNumber|int|string $versionNumber
-     *
      * @throws VersionNotFound
      * @throws RemoteConfigException if something went wrong
      */
-    public function getVersion($versionNumber): Version;
+    public function getVersion(VersionNumber|int|string $versionNumber): Version;
 
     /**
      * Returns a version with the given number.
      *
-     * @param VersionNumber|int|string $versionNumber
-     *
      * @throws VersionNotFound
      * @throws RemoteConfigException if something went wrong
      */
-    public function rollbackToVersion($versionNumber): Template;
+    public function rollbackToVersion(VersionNumber|int|string $versionNumber): Template;
 
     /**
      * @param FindVersions|array<string, mixed>|null $query
      *
      * @throws RemoteConfigException if something went wrong
      *
-     * @return Traversable<Version>|Version[]
+     * @phpstan-return Traversable<Version>|Version[]
      */
-    public function listVersions($query = null): Traversable;
+    public function listVersions(array|FindVersions $query = null): Traversable;
 }

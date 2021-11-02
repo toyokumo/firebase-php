@@ -44,10 +44,8 @@ final class CreateDynamicLink implements JsonSerializable
      * or payload, which initiates app-specific logic (such as crediting the user with a coupon or
      * displaying a welcome screen). This link must be a well-formatted URL, be properly
      * URL-encoded, use either HTTP or HTTPS, and cannot be another Dynamic Link.
-     *
-     * @param string|UriInterface|Url $url
      */
-    public static function forUrl($url): self
+    public static function forUrl(string|UriInterface|Url $url): self
     {
         $url = Url::fromValue((string) $url);
 
@@ -57,10 +55,7 @@ final class CreateDynamicLink implements JsonSerializable
         return $action;
     }
 
-    /**
-     * @param string|Url|UriInterface $dynamicLinkDomain
-     */
-    public function withDynamicLinkDomain($dynamicLinkDomain): self
+    public function withDynamicLinkDomain(string|Url|UriInterface $dynamicLinkDomain): self
     {
         $dynamicLinkDomain = Url::fromValue((string) $dynamicLinkDomain);
 
@@ -78,7 +73,7 @@ final class CreateDynamicLink implements JsonSerializable
     /**
      * @param AnalyticsInfo|array<string, mixed> $data
      */
-    public function withAnalyticsInfo($data): self
+    public function withAnalyticsInfo(AnalyticsInfo|array $data): self
     {
         $info = $data instanceof AnalyticsInfo ? $data : AnalyticsInfo::fromArray($data);
 
@@ -91,7 +86,7 @@ final class CreateDynamicLink implements JsonSerializable
     /**
      * @param AndroidInfo|array<string, string> $data
      */
-    public function withAndroidInfo($data): self
+    public function withAndroidInfo(AndroidInfo|array $data): self
     {
         $info = $data instanceof AndroidInfo ? $data : AndroidInfo::fromArray($data);
 
@@ -104,7 +99,7 @@ final class CreateDynamicLink implements JsonSerializable
     /**
      * @param IOSInfo|array<string, string> $data
      */
-    public function withIOSInfo($data): self
+    public function withIOSInfo(IOSInfo|array $data): self
     {
         $info = $data instanceof IOSInfo ? $data : IOSInfo::fromArray($data);
 
@@ -117,7 +112,7 @@ final class CreateDynamicLink implements JsonSerializable
     /**
      * @param NavigationInfo|array<string, mixed> $data
      */
-    public function withNavigationInfo($data): self
+    public function withNavigationInfo(NavigationInfo|array $data): self
     {
         $info = $data instanceof NavigationInfo ? $data : NavigationInfo::fromArray($data);
 
@@ -130,7 +125,7 @@ final class CreateDynamicLink implements JsonSerializable
     /**
      * @param SocialMetaTagInfo|array<string, mixed> $data
      */
-    public function withSocialMetaTagInfo($data): self
+    public function withSocialMetaTagInfo(SocialMetaTagInfo|array $data): self
     {
         $info = $data instanceof SocialMetaTagInfo ? $data : SocialMetaTagInfo::fromArray($data);
 

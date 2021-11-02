@@ -22,7 +22,7 @@ final class FailedToCreateActionLink extends RuntimeException implements Firebas
 
         try {
             $message = JSON::decode((string) $response->getBody(), true)['error']['message'] ?? $fallbackMessage;
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             $message = $fallbackMessage;
         }
 

@@ -17,20 +17,8 @@ final class WebPushConfig implements JsonSerializable
     private const URGENCY_NORMAL = 'normal';
     private const URGENCY_HIGH = 'high';
 
-    /** @var array{
-     *      headers?: array<string, string>,
-     *      data?: array<string, string>,
-     *      notification?: array<string, mixed>,
-     *      fcm_options?: array{
-     *          link?: string,
-     *          analytics_label?: string
-     *      }
-     * }
-     */
-    private array $config;
-
     /**
-     * @param array{
+     * @phpstan-param array{
      *     headers?: array<string, string>,
      *     data?: array<string, string>,
      *     notification?: array<string, mixed>,
@@ -40,9 +28,8 @@ final class WebPushConfig implements JsonSerializable
      *     }
      * } $config
      */
-    private function __construct(array $config)
+    private function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     public static function new(): self
@@ -51,7 +38,7 @@ final class WebPushConfig implements JsonSerializable
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     headers?: array<string, string>,
      *     data?: array<string, string>,
      *     notification?: array<string, mixed>,

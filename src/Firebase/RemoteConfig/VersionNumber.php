@@ -6,19 +6,13 @@ namespace Kreait\Firebase\RemoteConfig;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-final class VersionNumber implements \JsonSerializable
+final class VersionNumber implements \JsonSerializable, \Stringable
 {
-    private string $value;
-
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
-    /**
-     * @param int|string $value
-     */
-    public static function fromValue($value): self
+    public static function fromValue(int|string $value): self
     {
         $valueString = (string) $value;
 
@@ -29,7 +23,7 @@ final class VersionNumber implements \JsonSerializable
         return new self($valueString);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -39,10 +33,7 @@ final class VersionNumber implements \JsonSerializable
         return $this->value;
     }
 
-    /**
-     * @param self|string $other
-     */
-    public function equalsTo($other): bool
+    public function equalsTo(self|string $other): bool
     {
         return $this->value === (string) $other;
     }

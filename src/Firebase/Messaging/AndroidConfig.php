@@ -15,21 +15,8 @@ final class AndroidConfig implements JsonSerializable
     private const PRIORITY_NORMAL = 'normal';
     private const PRIORITY_HIGH = 'high';
 
-    /** @var array{
-     *      collapse_key?: string,
-     *      priority?: 'normal'|'high',
-     *      ttl?: string,
-     *      restricted_package_name?: string,
-     *      data?: array<string, string>,
-     *      notification?: array<string, string>,
-     *      fcm_options?: array<string, mixed>,
-     *      direct_boot_ok?: bool
-     * }
-     */
-    private array $config;
-
     /**
-     * @param array{
+     * @phpstan-param array{
      *     collapse_key?: string,
      *     priority?: 'normal'|'high',
      *     ttl?: string,
@@ -40,9 +27,8 @@ final class AndroidConfig implements JsonSerializable
      *     direct_boot_ok?: bool
      * } $config
      */
-    private function __construct(array $config)
+    private function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     public static function new(): self
@@ -51,7 +37,7 @@ final class AndroidConfig implements JsonSerializable
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     collapse_key?: string,
      *     priority?: 'normal'|'high',
      *     ttl?: string,

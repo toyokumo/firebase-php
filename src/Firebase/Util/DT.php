@@ -16,10 +16,8 @@ class DT
 {
     /**
      * @internal
-     *
-     * @param mixed $value
      */
-    public static function toUTCDateTimeImmutable($value): DateTimeImmutable
+    public static function toUTCDateTimeImmutable(mixed $value): DateTimeImmutable
     {
         $tz = new DateTimeZone('UTC');
         $now = \time();

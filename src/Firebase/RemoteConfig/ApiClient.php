@@ -17,15 +17,13 @@ use Throwable;
  */
 class ApiClient
 {
-    private ClientInterface $client;
     private RemoteConfigApiExceptionConverter $errorHandler;
 
     /**
      * @internal
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $client;
         $this->errorHandler = new RemoteConfigApiExceptionConverter();
     }
 
@@ -82,8 +80,8 @@ class ApiClient
         $lastVersionNumber = $query->lastVersionNumber();
         $pageSize = $query->pageSize();
 
-        $since = $since !== null ? $since->format('Y-m-d\TH:i:s.v\Z') : null;
-        $until = $until !== null ? $until->format('Y-m-d\TH:i:s.v\Z') : null;
+        $since = $since?->format('Y-m-d\TH:i:s.v\Z');
+        $until = $until?->format('Y-m-d\TH:i:s.v\Z');
         $lastVersionNumber = $lastVersionNumber !== null ? (string) $lastVersionNumber : null;
         $pageSize = $pageSize ? (string) $pageSize : null;
 
@@ -113,12 +111,11 @@ class ApiClient
     }
 
     /**
-     * @param string|UriInterface $uri
      * @param array<string, mixed>|null $options
      *
      * @throws RemoteConfigException
      */
-    private function requestApi(string $method, $uri, ?array $options = null): ResponseInterface
+    private function requestApi(string $method, string|UriInterface $uri, ?array $options = null): ResponseInterface
     {
         $options ??= [];
         $options['decode_content'] = 'gzip';

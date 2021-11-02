@@ -36,7 +36,7 @@ final class AnalyticsInfo implements JsonSerializable
     /**
      * @param GooglePlayAnalytics|array<string, string> $data
      */
-    public function withGooglePlayAnalyticsInfo($data): self
+    public function withGooglePlayAnalyticsInfo(GooglePlayAnalytics|array $data): self
     {
         $gpInfo = $data instanceof GooglePlayAnalytics ? $data : GooglePlayAnalytics::fromArray($data);
 
@@ -49,7 +49,7 @@ final class AnalyticsInfo implements JsonSerializable
     /**
      * @param ITunesConnectAnalytics|array<string, string> $data
      */
-    public function withItunesConnectAnalytics($data): self
+    public function withItunesConnectAnalytics(ITunesConnectAnalytics|array $data): self
     {
         $gpInfo = $data instanceof ITunesConnectAnalytics ? $data : ITunesConnectAnalytics::fromArray($data);
 

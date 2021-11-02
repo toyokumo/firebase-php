@@ -16,17 +16,15 @@ final class MessageData implements \JsonSerializable
     }
 
     /**
-     * @param array<array-key, mixed> $data
+     * @param array<scalar|\Stringable, scalar|\Stringable> $data
+     *
+     * @throws InvalidArgumentException
      */
     public static function fromArray(array $data): self
     {
         $messageData = new self();
 
         foreach ($data as $key => $value) {
-            if (!self::isStringable($key) || !self::isStringable($value)) {
-                throw new InvalidArgumentException('Message data must be a one-dimensional array of string(able) keys and values.');
-            }
-
             $key = (string) $key;
             $value = (string) $value;
 
@@ -51,14 +49,6 @@ final class MessageData implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->data;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    private static function isStringable($value): bool
-    {
-        return null === $value || \is_scalar($value) || (\is_object($value) && \method_exists($value, '__toString'));
     }
 
     private static function isBinary(string $value): bool

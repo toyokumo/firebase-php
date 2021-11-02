@@ -48,7 +48,7 @@ abstract class DatabaseTestCase extends IntegrationTestCase
             }
 
             return null;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }

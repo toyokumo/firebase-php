@@ -36,11 +36,8 @@ final class GuzzleHandler implements Handler
         'Content-Type' => 'application/json; charset=UTF-8',
     ];
 
-    private ClientInterface $client;
-
-    public function __construct(ClientInterface $client)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $client;
     }
 
     public function handle(SignIn $action): SignInResult
@@ -68,22 +65,15 @@ final class GuzzleHandler implements Handler
 
     private function createApiRequest(SignIn $action): RequestInterface
     {
-        switch (true) {
-            case $action instanceof SignInAnonymously:
-                return $this->anonymous($action);
-            case $action instanceof SignInWithCustomToken:
-                return $this->customToken($action);
-            case $action instanceof SignInWithEmailAndPassword:
-                return $this->emailAndPassword($action);
-            case $action instanceof SignInWithEmailAndOobCode:
-                return $this->emailAndOobCode($action);
-            case $action instanceof SignInWithIdpCredentials:
-                return $this->idpCredentials($action);
-            case $action instanceof SignInWithRefreshToken:
-                return $this->refreshToken($action);
-            default:
-                throw new FailedToSignIn(self::class.' does not support '.\get_class($action));
-        }
+        return match (true) {
+            $action instanceof SignInAnonymously => $this->anonymous($action),
+            $action instanceof SignInWithCustomToken => $this->customToken($action),
+            $action instanceof SignInWithEmailAndPassword => $this->emailAndPassword($action),
+            $action instanceof SignInWithEmailAndOobCode => $this->emailAndOobCode($action),
+            $action instanceof SignInWithIdpCredentials => $this->idpCredentials($action),
+            $action instanceof SignInWithRefreshToken => $this->refreshToken($action),
+            default => throw new FailedToSignIn(self::class.' does not support '.$action::class),
+        };
     }
 
     private function anonymous(SignInAnonymously $action): Request

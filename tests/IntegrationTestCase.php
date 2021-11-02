@@ -54,10 +54,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
         ;
     }
 
-    /**
-     * @param UserRecord|Uid|string|null $userOrUid
-     */
-    protected function deleteUser($userOrUid): void
+    protected function deleteUser(UserRecord|string|Uid|null $userOrUid): void
     {
         if ($userOrUid === null) {
             return;
@@ -67,7 +64,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
 
         try {
             self::$factory->createAuth()->deleteUser($uid);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             // Well, if that failed, *we're* failed
         }
     }
@@ -78,8 +75,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
             $this->markTestSkipped('No registration token available');
         }
 
-        // @noinspection NonSecureArrayRandUsageInspection
-        return self::$registrationTokens[\array_rand(self::$registrationTokens)];
+        return self::$registrationTokens[\random_int(0, \count(self::$registrationTokens) - 1)];
     }
 
     protected static function randomString(string $suffix = ''): string
@@ -102,7 +98,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
 
         try {
             return ServiceAccount::fromValue($credentialsPath);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -133,7 +129,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
             }
 
             return null;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -149,7 +145,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
 
         try {
             return JSON::decode($tokens, true);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }

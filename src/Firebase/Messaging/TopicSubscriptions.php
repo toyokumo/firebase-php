@@ -29,7 +29,7 @@ final class TopicSubscriptions implements Countable, IteratorAggregate
     /**
      * @codeCoverageIgnore
      *
-     * @return Traversable<TopicSubscription>|TopicSubscription[]
+     * @phpstan-return Traversable<TopicSubscription>|TopicSubscription[]
      */
     public function getIterator(): iterable
     {

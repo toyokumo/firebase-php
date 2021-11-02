@@ -8,13 +8,9 @@ class DefaultValue implements \JsonSerializable
 {
     public const IN_APP_DEFAULT_VALUE = true;
 
-    /** @var string|bool */
-    private $value;
+    private string|bool $value;
 
-    /**
-     * @param string|bool $value
-     */
-    private function __construct($value)
+    private function __construct(string|bool $value)
     {
         $this->value = \is_string($value) ? $value : true;
     }
@@ -29,16 +25,13 @@ class DefaultValue implements \JsonSerializable
         return new self($value);
     }
 
-    /**
-     * @return string|bool
-     */
-    public function value()
+    public function value(): string|bool
     {
         return $this->value;
     }
 
     /**
-     * @param array{
+     * @phpstan-param array{
      *     value: string|bool
      * }|array{
      *     useInAppDefault: bool
@@ -50,7 +43,7 @@ class DefaultValue implements \JsonSerializable
     }
 
     /**
-     * @return array<string, string|bool>
+     * @phpstan-return array<string, string|bool>
      */
     public function jsonSerialize(): array
     {

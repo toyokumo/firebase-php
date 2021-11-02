@@ -8,30 +8,8 @@ use Kreait\Firebase\Util\DT;
 
 final class Version
 {
-    private VersionNumber $versionNumber;
-    private User $user;
-    private \DateTimeImmutable $updatedAt;
-    private string $description;
-    private UpdateOrigin $updateOrigin;
-    private UpdateType $updateType;
-    private ?VersionNumber $rollbackSource;
-
-    private function __construct(
-        VersionNumber $versionNumber,
-        User $user,
-        string $description,
-        \DateTimeImmutable $updatedAt,
-        UpdateOrigin $updateOrigin,
-        UpdateType $updateType,
-        ?VersionNumber $rollbackSource
-    ) {
-        $this->versionNumber = $versionNumber;
-        $this->user = $user;
-        $this->description = $description;
-        $this->updatedAt = $updatedAt;
-        $this->updateOrigin = $updateOrigin;
-        $this->updateType = $updateType;
-        $this->rollbackSource = $rollbackSource;
+    private function __construct(private VersionNumber $versionNumber, private User $user, private string $description, private \DateTimeImmutable $updatedAt, private UpdateOrigin $updateOrigin, private UpdateType $updateType, private ?VersionNumber $rollbackSource)
+    {
     }
 
     /**

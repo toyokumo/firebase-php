@@ -39,13 +39,11 @@ use Traversable;
 interface Auth
 {
     /**
-     * @param Uid|string $uid
-     *
      * @throws UserNotFound
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function getUser($uid): UserRecord;
+    public function getUser(Uid|string $uid): UserRecord;
 
     /**
      * @param array<Uid|string> $uids
@@ -53,7 +51,7 @@ interface Auth
      * @throws Exception\FirebaseException
      * @throws Exception\AuthException
      *
-     * @return array<string, UserRecord|null>
+     * @phpstan-return array<string, UserRecord|null>
      */
     public function getUsers(array $uids): array;
 
@@ -73,44 +71,36 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function createUser($properties): UserRecord;
+    public function createUser(array|Request\CreateUser $properties): UserRecord;
 
     /**
      * Updates the given user with the given properties.
      *
-     * @param Uid|string $uid
      * @param array<string, mixed>|Request\UpdateUser $properties
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function updateUser($uid, $properties): UserRecord;
+    public function updateUser(Uid|string $uid, array|Request\UpdateUser $properties): UserRecord;
 
     /**
-     * @param Email|string $email
-     * @param ClearTextPassword|string $password
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function createUserWithEmailAndPassword($email, $password): UserRecord;
+    public function createUserWithEmailAndPassword(Email|string $email, ClearTextPassword|string $password): UserRecord;
 
     /**
-     * @param Email|string $email
-     *
      * @throws UserNotFound
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function getUserByEmail($email): UserRecord;
+    public function getUserByEmail(Email|string $email): UserRecord;
 
     /**
-     * @param PhoneNumber|string $phoneNumber
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function getUserByPhoneNumber($phoneNumber): UserRecord;
+    public function getUserByPhoneNumber(PhoneNumber|string $phoneNumber): UserRecord;
 
     /**
      * @throws Exception\AuthException
@@ -119,47 +109,35 @@ interface Auth
     public function createAnonymousUser(): UserRecord;
 
     /**
-     * @param Uid|string $uid
-     * @param ClearTextPassword|string $newPassword
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function changeUserPassword($uid, $newPassword): UserRecord;
+    public function changeUserPassword(Uid|string $uid, ClearTextPassword|string $newPassword): UserRecord;
 
     /**
-     * @param Uid|string $uid
-     * @param Email|string $newEmail
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function changeUserEmail($uid, $newEmail): UserRecord;
+    public function changeUserEmail(Uid|string $uid, Email|string $newEmail): UserRecord;
 
     /**
-     * @param Uid|string $uid
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function enableUser($uid): UserRecord;
+    public function enableUser(Uid|string $uid): UserRecord;
 
     /**
-     * @param Uid|string $uid
-     *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function disableUser($uid): UserRecord;
+    public function disableUser(Uid|string $uid): UserRecord;
 
     /**
-     * @param Uid|string $uid
-     *
      * @throws UserNotFound
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function deleteUser($uid): void;
+    public function deleteUser(Uid|string $uid): void;
 
     /**
      * @param iterable<Uid|string> $uids
@@ -170,88 +148,78 @@ interface Auth
     public function deleteUsers(iterable $uids, bool $forceDeleteEnabledUsers = false): DeleteUsersResult;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getEmailActionLink(string $type, $email, $actionCodeSettings = null): string;
+    public function getEmailActionLink(string $type, Email|string $email, array|ActionCodeSettings $actionCodeSettings = null): string;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws UserNotFound
      * @throws FailedToSendActionLink
      */
-    public function sendEmailActionLink(string $type, $email, $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getEmailVerificationLink($email, $actionCodeSettings = null): string;
+    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendEmailVerificationLink($email, $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getPasswordResetLink($email, $actionCodeSettings = null): string;
+    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendPasswordResetLink($email, $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getSignInWithEmailLink($email, $actionCodeSettings = null): string;
+    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
 
     /**
-     * @param Email|string $email
-     * @param ActionCodeSettings|array<string, mixed>|null $actionCodeSettings
+     * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendSignInWithEmailLink($email, $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
      * Sets additional developer claims on an existing user identified by the provided UID.
      *
      * @see https://firebase.google.com/docs/auth/admin/custom-claims
      *
-     * @param Uid|string $uid
      * @param array<string, mixed>|null $claims
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function setCustomUserClaims($uid, ?array $claims): void;
+    public function setCustomUserClaims(Uid|string $uid, ?array $claims): void;
 
     /**
-     * @param Uid|string $uid
      * @param array<string, mixed> $claims
      */
-    public function createCustomToken($uid, array $claims = []): Token;
+    public function createCustomToken(Uid|string $uid, array $claims = []): Token;
 
     public function parseToken(string $tokenString): Token;
 
@@ -261,12 +229,11 @@ interface Auth
      * The session cookie JWT will have the same payload claims as the provided ID token.
      *
      * @param Token|string $idToken The Firebase ID token to exchange for a session cookie
-     * @param DateInterval|int $ttl
      *
      * @throws InvalidArgumentException if the token or TTL is invalid
      * @throws FailedToCreateSessionCookie
      */
-    public function createSessionCookie($idToken, $ttl): string;
+    public function createSessionCookie(Token|string $idToken, DateInterval|int $ttl): string;
 
     /**
      * Verifies a JWT auth token. Returns a Promise with the tokens claims. Rejects the promise if the token
@@ -290,7 +257,7 @@ interface Auth
      * @throws UnknownKey if the token's kid header doesnt' contain a known key
      * @throws RevokedIdToken if the token has been revoked
      */
-    public function verifyIdToken($idToken, bool $checkIfRevoked = false): Token;
+    public function verifyIdToken(Token|string $idToken, bool $checkIfRevoked = false): Token;
 
     /**
      * Verifies the given password reset code.
@@ -324,7 +291,6 @@ interface Auth
      * @see https://firebase.google.com/docs/reference/rest/auth#section-confirm-reset-password
      *
      * @param string $oobCode the email action code sent to the user's email for resetting the password
-     * @param ClearTextPassword|string $newPassword
      * @param bool $invalidatePreviousSessions Invalidate sessions initialized with the previous credentials
      *
      * @throws ExpiredOobCode
@@ -334,7 +300,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function confirmPasswordReset(string $oobCode, $newPassword, bool $invalidatePreviousSessions = true): void;
+    public function confirmPasswordReset(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): void;
 
     /**
      * Applies the password reset requested via the given OOB code and returns the associated user's email address.
@@ -342,7 +308,6 @@ interface Auth
      * @see https://firebase.google.com/docs/reference/rest/auth#section-confirm-reset-password
      *
      * @param string $oobCode the email action code sent to the user's email for resetting the password
-     * @param ClearTextPassword|string $newPassword
      * @param bool $invalidatePreviousSessions Invalidate sessions initialized with the previous credentials
      *
      * @throws ExpiredOobCode
@@ -352,7 +317,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function confirmPasswordResetAndReturnEmail(string $oobCode, $newPassword, bool $invalidatePreviousSessions = true): Email;
+    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): Email;
 
     /**
      * Revokes all refresh tokens for the specified user identified by the uid provided.
@@ -365,31 +330,27 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function revokeRefreshTokens($uid): void;
+    public function revokeRefreshTokens(Uid|string $uid): void;
 
     /**
-     * @param Uid|string $uid
      * @param Provider[]|string[]|string $provider
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function unlinkProvider($uid, $provider): UserRecord;
+    public function unlinkProvider(Uid|string $uid, array|string $provider): UserRecord;
 
     /**
-     * @param UserRecord|Uid|string $user
      * @param array<string, mixed>|null $claims
      *
      * @throws FailedToSignIn
      */
-    public function signInAsUser($user, ?array $claims = null): SignInResult;
+    public function signInAsUser(UserRecord|Uid|string $user, ?array $claims = null): SignInResult;
 
     /**
-     * @param Token|string $token
-     *
      * @throws FailedToSignIn
      */
-    public function signInWithCustomToken($token): SignInResult;
+    public function signInWithCustomToken(Token|string $token): SignInResult;
 
     /**
      * @throws FailedToSignIn
@@ -397,19 +358,14 @@ interface Auth
     public function signInWithRefreshToken(string $refreshToken): SignInResult;
 
     /**
-     * @param string|Email $email
-     * @param string|ClearTextPassword $clearTextPassword
-     *
      * @throws FailedToSignIn
      */
-    public function signInWithEmailAndPassword($email, $clearTextPassword): SignInResult;
+    public function signInWithEmailAndPassword(string|Email $email, string|ClearTextPassword $clearTextPassword): SignInResult;
 
     /**
-     * @param string|Email $email
-     *
      * @throws FailedToSignIn
      */
-    public function signInWithEmailAndOobCode($email, string $oobCode): SignInResult;
+    public function signInWithEmailAndOobCode(string|Email $email, string $oobCode): SignInResult;
 
     /**
      * @throws FailedToSignIn
@@ -427,19 +383,12 @@ interface Auth
     /**
      * @see https://cloud.google.com/identity-platform/docs/reference/rest/v1/accounts/signInWithIdp
      *
-     * @param Provider|string $provider
-     * @param UriInterface|string|null $redirectUrl
-     *
      * @throws FailedToSignIn
      */
-    public function signInWithIdpAccessToken($provider, string $accessToken, $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 
     /**
-     * @param Provider|string $provider
-     * @param Token|string $idToken
-     * @param UriInterface|string|null $redirectUrl
-     *
      * @throws FailedToSignIn
      */
-    public function signInWithIdpIdToken($provider, $idToken, $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 }

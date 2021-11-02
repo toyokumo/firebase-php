@@ -18,16 +18,15 @@ class JSON
      *
      * @see \GuzzleHttp\json_encode()
      *
-     * @param mixed $value The value being encoded
-     * @param int<0, max>|null $options JSON encode option bitmask
-     * @param int<1, max>|null $depth Set the maximum depth. Must be greater than zero
+     * @phpstan-param int<0, max>|null $options JSON encode option bitmask
+     * @phpstan-param int<1, max>|null $depth Set the maximum depth. Must be greater than zero
      *
      * @throws InvalidArgumentException if the JSON cannot be encoded
      */
-    public static function encode($value, ?int $options = null, ?int $depth = null): string
+    public static function encode(mixed $value, ?int $options = null, ?int $depth = null): string
     {
-        $options ??= 0;
-        $depth ??= 512;
+        $depth = $depth ?? 512;
+        $options = $options ?? 0;
 
         try {
             return \json_encode($value, JSON_THROW_ON_ERROR | $options, $depth);
@@ -47,18 +46,16 @@ class JSON
      *
      * @param string $json JSON data to parse
      * @param bool|null $assoc When true, returned objects will be converted into associative arrays
-     * @param int<1, max>|null $depth User specified recursion depth
-     * @param int<0, max>|null $options Bitmask of JSON decode options
+     * @phpstan-param int<1, max>|null $depth User specified recursion depth
+     * @phpstan-param int<0, max>|null $options Bitmask of JSON decode options
      *
      * @throws \InvalidArgumentException if the JSON cannot be decoded
-     *
-     * @return mixed
      */
-    public static function decode(string $json, ?bool $assoc = null, ?int $depth = null, ?int $options = null)
+    public static function decode(string $json, ?bool $assoc = null, ?int $depth = null, ?int $options = null): mixed
     {
-        $assoc ??= false;
-        $depth ??= 512;
-        $options ??= 0;
+        $assoc = $assoc ?? null;
+        $depth = $depth ?? 512;
+        $options = $options ?? 0;
 
         try {
             return \json_decode($json, $assoc, $depth, JSON_THROW_ON_ERROR | $options);
@@ -71,26 +68,22 @@ class JSON
      * Returns true if the given value is a valid JSON string.
      *
      * @internal
-     *
-     * @param mixed $value
      */
-    public static function isValid($value): bool
+    public static function isValid(string $value): bool
     {
         try {
             self::decode($value);
 
             return true;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
     }
 
     /**
      * @internal
-     *
-     * @param mixed $value
      */
-    public static function prettyPrint($value): string
+    public static function prettyPrint(mixed $value): string
     {
         return self::encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }

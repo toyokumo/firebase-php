@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase;
 
+use DateInterval;
 use Firebase\Auth\Token\Domain\Generator as TokenGenerator;
 use Firebase\Auth\Token\Domain\Verifier;
 use Firebase\Auth\Token\Exception\InvalidToken;
@@ -44,41 +45,27 @@ use Kreait\Firebase\Value\Uid;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use Throwable;
 use Traversable;
 
 class Auth implements Contract\Auth
 {
-    private ApiClient $client;
-    private ClientInterface $httpClient;
-    private TokenGenerator $tokenGenerator;
-    private Verifier $idTokenVerifier;
-    private SignInHandler $signInHandler;
-    private ?TenantId $tenantId;
-    private ?ProjectId $projectId;
-
     /**
      * @internal
      */
     public function __construct(
-        ApiClient $apiClient,
-        ClientInterface $httpClient,
-        TokenGenerator $tokenGenerator,
-        Verifier $idTokenVerifier,
-        SignInHandler $signInHandler,
-        ?TenantId $tenantId = null,
-        ?ProjectId $projectId = null
+        private ApiClient $client,
+        private ClientInterface $httpClient,
+        private TokenGenerator $tokenGenerator,
+        private Verifier $idTokenVerifier,
+        private SignInHandler $signInHandler,
+        private ?TenantId $tenantId = null,
+        private ?ProjectId $projectId = null
     ) {
-        $this->client = $apiClient;
-        $this->httpClient = $httpClient;
-        $this->tokenGenerator = $tokenGenerator;
-        $this->idTokenVerifier = $idTokenVerifier;
-        $this->signInHandler = $signInHandler;
-        $this->tenantId = $tenantId;
-        $this->projectId = $projectId;
     }
 
-    public function getUser($uid): UserRecord
+    public function getUser(Uid|string $uid): UserRecord
     {
         $uid = $uid instanceof Uid ? (string) $uid : $uid;
 
@@ -145,7 +132,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function updateUser($uid, $properties): UserRecord
+    public function updateUser(Uid|string $uid, array|Request\UpdateUser $properties): UserRecord
     {
         $request = $properties instanceof Request\UpdateUser
             ? $properties
@@ -158,7 +145,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function createUserWithEmailAndPassword($email, $password): UserRecord
+    public function createUserWithEmailAndPassword(Email|string $email, ClearTextPassword|string $password): UserRecord
     {
         return $this->createUser(
             Request\CreateUser::new()
@@ -167,7 +154,7 @@ class Auth implements Contract\Auth
         );
     }
 
-    public function getUserByEmail($email): UserRecord
+    public function getUserByEmail(Email|string $email): UserRecord
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -182,7 +169,7 @@ class Auth implements Contract\Auth
         return UserRecord::fromResponseData($data['users'][0]);
     }
 
-    public function getUserByPhoneNumber($phoneNumber): UserRecord
+    public function getUserByPhoneNumber(PhoneNumber|string $phoneNumber): UserRecord
     {
         $phoneNumber = $phoneNumber instanceof PhoneNumber ? $phoneNumber : new PhoneNumber($phoneNumber);
 
@@ -202,33 +189,33 @@ class Auth implements Contract\Auth
         return $this->createUser(Request\CreateUser::new());
     }
 
-    public function changeUserPassword($uid, $newPassword): UserRecord
+    public function changeUserPassword(Uid|string $uid, ClearTextPassword|string $newPassword): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withClearTextPassword($newPassword));
     }
 
-    public function changeUserEmail($uid, $newEmail): UserRecord
+    public function changeUserEmail(Uid|string $uid, Email|string $newEmail): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withEmail($newEmail));
     }
 
-    public function enableUser($uid): UserRecord
+    public function enableUser(Uid|string $uid): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->markAsEnabled());
     }
 
-    public function disableUser($uid): UserRecord
+    public function disableUser(Uid|string $uid): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->markAsDisabled());
     }
 
-    public function deleteUser($uid): void
+    public function deleteUser(Uid|string $uid): void
     {
         $uid = $uid instanceof Uid ? $uid : new Uid($uid);
 
         try {
             $this->client->deleteUser((string) $uid);
-        } catch (UserNotFound $e) {
+        } catch (UserNotFound) {
             throw new UserNotFound("No user with uid '{$uid}' found.");
         }
     }
@@ -241,19 +228,17 @@ class Auth implements Contract\Auth
 
         $request = DeleteUsersRequest::withUids($this->projectId->value(), $uids, $forceDeleteEnabledUsers);
 
-        $tenantId = $this->tenantId !== null ? $this->tenantId->toString() : null;
-
         $response = $this->client->deleteUsers(
             $request->projectId(),
             $request->uids(),
             $request->enabledUsersShouldBeForceDeleted(),
-            $tenantId
+            $this->tenantId?->toString()
         );
 
         return DeleteUsersResult::fromRequestAndResponse($request, $response);
     }
 
-    public function getEmailActionLink(string $type, $email, $actionCodeSettings = null): string
+    public function getEmailActionLink(string $type, Email|string $email, array|ActionCodeSettings $actionCodeSettings = null): string
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -265,14 +250,12 @@ class Auth implements Contract\Auth
                 : ValidatedActionCodeSettings::fromArray($actionCodeSettings);
         }
 
-        $tenantId = $this->tenantId !== null ? $this->tenantId->toString() : null;
-
         return (new CreateActionLink\GuzzleApiClientHandler($this->httpClient))
-            ->handle(CreateActionLink::new($type, $email, $actionCodeSettings, $tenantId))
+            ->handle(CreateActionLink::new($type, $email, $actionCodeSettings, $this->tenantId?->toString()))
         ;
     }
 
-    public function sendEmailActionLink(string $type, $email, $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -284,9 +267,7 @@ class Auth implements Contract\Auth
                 : ValidatedActionCodeSettings::fromArray($actionCodeSettings);
         }
 
-        $tenantId = $this->tenantId !== null ? $this->tenantId->toString() : null;
-
-        $createAction = CreateActionLink::new($type, $email, $actionCodeSettings, $tenantId);
+        $createAction = CreateActionLink::new($type, $email, $actionCodeSettings, $this->tenantId?->toString());
         $sendAction = new SendActionLink($createAction, $locale);
 
         if (\mb_strtolower($type) === 'verify_email') {
@@ -318,37 +299,37 @@ class Auth implements Contract\Auth
         (new SendActionLink\GuzzleApiClientHandler($this->httpClient))->handle($sendAction);
     }
 
-    public function getEmailVerificationLink($email, $actionCodeSettings = null): string
+    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings);
     }
 
-    public function sendEmailVerificationLink($email, $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings, $locale);
     }
 
-    public function getPasswordResetLink($email, $actionCodeSettings = null): string
+    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings);
     }
 
-    public function sendPasswordResetLink($email, $actionCodeSettings = null, ?string $locale = null): void
+    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings, $locale);
     }
 
-    public function getSignInWithEmailLink($email, $actionCodeSettings = null): string
+    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings);
     }
 
-    public function sendSignInWithEmailLink($email, $actionCodeSettings = null, ?string $locale = null): void
+    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings, $locale);
     }
 
-    public function setCustomUserClaims($uid, ?array $claims): void
+    public function setCustomUserClaims(Uid|string $uid, ?array $claims): void
     {
         $uid = $uid instanceof Uid ? (string) $uid : $uid;
         $claims ??= [];
@@ -356,7 +337,7 @@ class Auth implements Contract\Auth
         $this->client->setCustomUserClaims($uid, $claims);
     }
 
-    public function createCustomToken($uid, array $claims = []): Token
+    public function createCustomToken(Uid|string $uid, array $claims = []): Token
     {
         $uid = $uid instanceof Uid ? $uid : new Uid($uid);
 
@@ -431,13 +412,13 @@ class Auth implements Contract\Auth
         return new Email($email);
     }
 
-    public function confirmPasswordReset(string $oobCode, $newPassword, bool $invalidatePreviousSessions = true): void
+    public function confirmPasswordReset(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): void
     {
         // Not returning the email on purpose to not break BC
         $this->confirmPasswordResetAndReturnEmail($oobCode, $newPassword, $invalidatePreviousSessions);
     }
 
-    public function confirmPasswordResetAndReturnEmail(string $oobCode, $newPassword, bool $invalidatePreviousSessions = true): Email
+    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): Email
     {
         $newPassword = $newPassword instanceof ClearTextPassword ? $newPassword : new ClearTextPassword($newPassword);
 
@@ -452,14 +433,14 @@ class Auth implements Contract\Auth
         return new Email($email);
     }
 
-    public function revokeRefreshTokens($uid): void
+    public function revokeRefreshTokens(Uid|string $uid): void
     {
         $uid = $uid instanceof Uid ? $uid : new Uid($uid);
 
         $this->client->revokeRefreshTokens((string) $uid);
     }
 
-    public function unlinkProvider($uid, $provider): UserRecord
+    public function unlinkProvider(Uid|string $uid, array|string $provider): UserRecord
     {
         $uid = $uid instanceof Uid ? $uid : new Uid($uid);
         $provider = \array_map(
@@ -472,7 +453,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function signInAsUser($user, ?array $claims = null): SignInResult
+    public function signInAsUser(UserRecord|Uid|string $user, ?array $claims = null): SignInResult
     {
         $claims ??= [];
         $uid = $user instanceof UserRecord ? $user->uid : (string) $user;
@@ -488,7 +469,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithCustomToken($token): SignInResult
+    public function signInWithCustomToken(Token|string $token): SignInResult
     {
         $token = $token instanceof Token ? $token->toString() : $token;
 
@@ -512,7 +493,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithEmailAndPassword($email, $clearTextPassword): SignInResult
+    public function signInWithEmailAndPassword(Email|string $email, ClearTextPassword|string $clearTextPassword): SignInResult
     {
         $email = $email instanceof Email ? (string) $email : $email;
         $clearTextPassword = $clearTextPassword instanceof ClearTextPassword ? (string) $clearTextPassword : $clearTextPassword;
@@ -526,7 +507,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithEmailAndOobCode($email, string $oobCode): SignInResult
+    public function signInWithEmailAndOobCode(Email|string $email, string $oobCode): SignInResult
     {
         $email = $email instanceof Email ? (string) $email : $email;
 
@@ -580,7 +561,7 @@ class Auth implements Contract\Auth
         return $this->signInWithIdpIdToken(Provider::APPLE, $idToken, $redirectUrl, $linkingIdToken, $rawNonce);
     }
 
-    public function signInWithIdpAccessToken($provider, string $accessToken, $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
         $provider = $provider instanceof Provider ? (string) $provider : $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
@@ -613,7 +594,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithIdpIdToken($provider, $idToken, $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
         $provider = $provider instanceof Provider ? (string) $provider : $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
@@ -645,7 +626,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function createSessionCookie($idToken, $ttl): string
+    public function createSessionCookie(Token|string $idToken, DateInterval|int $ttl): string
     {
         return (new CreateSessionCookie\GuzzleApiClientHandler($this->httpClient))
             ->handle(CreateSessionCookie::forIdToken($idToken, $ttl))

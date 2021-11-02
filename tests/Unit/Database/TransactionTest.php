@@ -40,7 +40,7 @@ final class TransactionTest extends TestCase
             $this->transaction->set($reference, 'does not matter');
         } catch (ReferenceHasNotBeenSnapshotted $e) {
             $this->assertSame($reference, $e->getReference());
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->fail('A '.ReferenceHasNotBeenSnapshotted::class.' should have been thrown');
         }
     }
@@ -69,7 +69,7 @@ final class TransactionTest extends TestCase
             $this->fail('An exception should have been thrown');
         } catch (TransactionFailed $e) {
             $this->assertSame($reference, $e->getReference());
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->fail('A '.TransactionFailed::class.' should have been thrown');
         }
     }

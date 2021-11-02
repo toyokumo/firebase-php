@@ -32,7 +32,7 @@ class UserInfo implements \JsonSerializable
     }
 
     /**
-     * @return array<string, string|null>
+     * @phpstan-return array<string, string|null>
      */
     public function jsonSerialize(): array
     {

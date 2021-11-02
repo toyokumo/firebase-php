@@ -27,7 +27,7 @@ final class RegistrationTokens implements Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException
      */
-    public static function fromValue($values): self
+    public static function fromValue(self|RegistrationToken|array|string $values): self
     {
         if ($values instanceof self) {
             $tokens = $values->values();
@@ -55,7 +55,7 @@ final class RegistrationTokens implements Countable, IteratorAggregate
     /**
      * @codeCoverageIgnore
      *
-     * @return Traversable<RegistrationToken>|RegistrationToken[]
+     * @phpstan-return Traversable<RegistrationToken>|RegistrationToken[]
      */
     public function getIterator(): iterable
     {
@@ -88,10 +88,7 @@ final class RegistrationTokens implements Countable, IteratorAggregate
         return \count($this->tokens);
     }
 
-    /**
-     * @param RegistrationToken|string $token
-     */
-    public function has($token): bool
+    public function has(RegistrationToken|string $token): bool
     {
         $token = $token instanceof RegistrationToken ? $token : RegistrationToken::fromValue($token);
 

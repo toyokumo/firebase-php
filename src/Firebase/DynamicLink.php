@@ -10,7 +10,7 @@ use Kreait\Firebase\Util\JSON;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-final class DynamicLink implements JsonSerializable
+final class DynamicLink implements JsonSerializable, \Stringable
 {
     /** @var array<string, mixed> */
     private array $data = [];

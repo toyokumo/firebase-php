@@ -10,20 +10,14 @@ use Kreait\Firebase\Exception\RuntimeException;
 
 class Storage implements Contract\Storage
 {
-    private StorageClient $storageClient;
-
-    private ?string $defaultBucket;
-
     /** @var Bucket[] */
     private array $buckets = [];
 
     /**
      * @internal
      */
-    public function __construct(StorageClient $storageClient, ?string $defaultBucket = null)
+    public function __construct(private StorageClient $storageClient, private ?string $defaultBucket = null)
     {
-        $this->storageClient = $storageClient;
-        $this->defaultBucket = $defaultBucket;
     }
 
     public function getStorageClient(): StorageClient

@@ -31,14 +31,13 @@ final class DefaultValueTest extends TestCase
     /**
      * @dataProvider arrayValueProvider
      *
-     * @param bool|string $expected
      * @param array{
      *     value: string|bool
      * }|array{
      *     useInAppDefault: bool
      * } $data
      */
-    public function testCreateFromArray($expected, array $data): void
+    public function testCreateFromArray(bool|string $expected, array $data): void
     {
         $defaultValue = DefaultValue::fromArray($data);
 

@@ -30,17 +30,11 @@ class Messaging implements Contract\Messaging
 {
     private string $projectId;
 
-    private ApiClient $messagingApi;
-
-    private AppInstanceApiClient $appInstanceApi;
-
     /**
      * @internal
      */
-    public function __construct(ProjectId $projectId, ApiClient $messagingApiClient, AppInstanceApiClient $appInstanceApiClient)
+    public function __construct(ProjectId $projectId, private ApiClient $messagingApi, private AppInstanceApiClient $appInstanceApi)
     {
-        $this->messagingApi = $messagingApiClient;
-        $this->appInstanceApi = $appInstanceApiClient;
         $this->projectId = $projectId->value();
     }
 
@@ -76,7 +70,7 @@ class Messaging implements Contract\Messaging
         return MulticastSendReport::fromRequestsAndResponses($request->subRequests(), $response->subResponses());
     }
 
-    public function sendAll($messages, bool $validateOnly = false): MulticastSendReport
+    public function sendAll(iterable|Messages $messages, bool $validateOnly = false): MulticastSendReport
     {
         $ensuredMessages = [];
 
@@ -109,7 +103,7 @@ class Messaging implements Contract\Messaging
         ];
     }
 
-    public function subscribeToTopic($topic, $registrationTokenOrTokens): array
+    public function subscribeToTopic(string|Topic $topic, RegistrationTokens|RegistrationToken|array|string $registrationTokenOrTokens): array
     {
         return $this->subscribeToTopics([$topic], $registrationTokenOrTokens);
     }
@@ -127,12 +121,12 @@ class Messaging implements Contract\Messaging
         return $this->appInstanceApi->subscribeToTopics($topicObjects, $tokens);
     }
 
-    public function unsubscribeFromTopic($topic, $registrationTokenOrTokens): array
+    public function unsubscribeFromTopic(string|Topic $topic, RegistrationTokens|RegistrationToken|array|string $registrationTokenOrTokens): array
     {
         return $this->unsubscribeFromTopics([$topic], $registrationTokenOrTokens);
     }
 
-    public function unsubscribeFromTopics(array $topics, $registrationTokenOrTokens): array
+    public function unsubscribeFromTopics(array $topics, RegistrationTokens|RegistrationToken|array|string $registrationTokenOrTokens): array
     {
         $topics = \array_map(
             static fn ($topic) => $topic instanceof Topic ? $topic : Topic::fromValue($topic),
@@ -176,7 +170,7 @@ class Messaging implements Contract\Messaging
         return $result;
     }
 
-    public function getAppInstance($registrationToken): AppInstance
+    public function getAppInstance(RegistrationToken|string $registrationToken): AppInstance
     {
         $token = $registrationToken instanceof RegistrationToken
             ? $registrationToken
@@ -184,7 +178,7 @@ class Messaging implements Contract\Messaging
 
         try {
             return $this->appInstanceApi->getAppInstanceAsync($token)->wait();
-        } catch (NotFound $e) {
+        } catch (NotFound) {
             throw NotFound::becauseTokenNotFound($token->value());
         } catch (MessagingException $e) {
             // The token is invalid
@@ -197,7 +191,7 @@ class Messaging implements Contract\Messaging
      *
      * @throws InvalidArgumentException
      */
-    private function makeMessage($message): Message
+    private function makeMessage(Message|array $message): Message
     {
         if ($message instanceof Message) {
             return $message;
@@ -211,7 +205,7 @@ class Messaging implements Contract\Messaging
      *
      * @throws InvalidArgument
      */
-    private function ensureNonEmptyRegistrationTokens($value): RegistrationTokens
+    private function ensureNonEmptyRegistrationTokens(RegistrationTokens|RegistrationToken|array|string $value): RegistrationTokens
     {
         try {
             $tokens = RegistrationTokens::fromValue($value);

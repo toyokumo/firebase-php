@@ -15,10 +15,8 @@ final class ConditionTest extends UnitTestCase
 {
     /**
      * @dataProvider valueProvider
-     *
-     * @param string|TagColor|null $tagColor
      */
-    public function testCreateCondition(string $name, ?string $expression = null, $tagColor = null): void
+    public function testCreateCondition(string $name, ?string $expression = null, TagColor|string $tagColor = null): void
     {
         $condition = Condition::named($name);
 

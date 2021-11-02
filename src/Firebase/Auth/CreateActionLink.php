@@ -9,16 +9,10 @@ use Kreait\Firebase\Value\Email;
 
 final class CreateActionLink
 {
-    private string $type;
-    private Email $email;
-    private ActionCodeSettings $settings;
     private ?string $tenantId = null;
 
-    private function __construct(string $type, Email $email, ActionCodeSettings $settings)
+    private function __construct(private string $type, private Email $email, private ActionCodeSettings $settings)
     {
-        $this->type = $type;
-        $this->email = $email;
-        $this->settings = $settings;
     }
 
     public static function new(string $type, Email $email, ActionCodeSettings $settings, ?string $tenantId = null): self

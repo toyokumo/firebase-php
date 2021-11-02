@@ -15,10 +15,8 @@ final class ClearTextPasswordTest extends TestCase
 {
     /**
      * @dataProvider validValues
-     *
-     * @param mixed $value
      */
-    public function testWithValidValue($value): void
+    public function testWithValidValue(string $value): void
     {
         $password = new ClearTextPassword($value);
 
@@ -29,10 +27,8 @@ final class ClearTextPasswordTest extends TestCase
 
     /**
      * @dataProvider invalidValues
-     *
-     * @param mixed $value
      */
-    public function testWithInvalidValue($value): void
+    public function testWithInvalidValue(mixed $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         new ClearTextPassword($value);

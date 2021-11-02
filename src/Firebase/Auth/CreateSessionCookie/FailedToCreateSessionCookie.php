@@ -12,18 +12,12 @@ use Throwable;
 
 final class FailedToCreateSessionCookie extends \RuntimeException implements FirebaseException
 {
-    private CreateSessionCookie $action;
-    private ?ResponseInterface $response = null;
-
-    public function __construct(CreateSessionCookie $action, ?ResponseInterface $response, string $message = null, int $code = null, ?Throwable $previous = null)
+    public function __construct(private CreateSessionCookie $action, private ?ResponseInterface $response, string $message = null, int $code = null, ?Throwable $previous = null)
     {
         $message ??= '';
         $code ??= 0;
 
         parent::__construct($message, $code, $previous);
-
-        $this->action = $action;
-        $this->response = $response;
     }
 
     public static function withActionAndResponse(CreateSessionCookie $action, ResponseInterface $response): self
@@ -32,7 +26,7 @@ final class FailedToCreateSessionCookie extends \RuntimeException implements Fir
 
         try {
             $message = JSON::decode((string) $response->getBody(), true)['error']['message'] ?? $fallbackMessage;
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             $message = $fallbackMessage;
         }
 

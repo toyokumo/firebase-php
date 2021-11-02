@@ -19,18 +19,12 @@ use Throwable;
 
 final class IdTokenVerifier implements Verifier
 {
-    private Verifier $verifier;
-
-    private Clock $clock;
-
     private int $leewayInSeconds = 0;
 
     private Configuration $config;
 
-    public function __construct(Verifier $verifier, Clock $clock)
+    public function __construct(private Verifier $verifier, private Clock $clock)
     {
-        $this->verifier = $verifier;
-        $this->clock = $clock;
         $this->config = Configuration::forUnsecuredSigner();
     }
 
@@ -122,10 +116,7 @@ final class IdTokenVerifier implements Verifier
         return $authenticatedAt < $check;
     }
 
-    /**
-     * @param Token|object|string $token
-     */
-    private function ensureToken($token): Token
+    private function ensureToken(object|string $token): Token
     {
         if ($token instanceof Token) {
             return $token;

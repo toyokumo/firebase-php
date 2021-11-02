@@ -24,7 +24,7 @@ final class Messages implements Countable, IteratorAggregate
     /**
      * @codeCoverageIgnore
      *
-     * @return Traversable<Message>|Message[]
+     * @phpstan-return Traversable<Message>|Message[]
      */
     public function getIterator(): iterable
     {
