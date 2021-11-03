@@ -30,7 +30,6 @@ use Kreait\Firebase\Auth\SignInWithIdpCredentials;
 use Kreait\Firebase\Auth\SignInWithRefreshToken;
 use Kreait\Firebase\Auth\TenantId;
 use Kreait\Firebase\Auth\UserRecord;
-use Kreait\Firebase\Exception\Auth\AuthError;
 use Kreait\Firebase\Exception\Auth\RevokedIdToken;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 use Kreait\Firebase\Exception\InvalidArgumentException;
@@ -60,8 +59,8 @@ class Auth implements Contract\Auth
         private TokenGenerator $tokenGenerator,
         private Verifier $idTokenVerifier,
         private SignInHandler $signInHandler,
-        private ?TenantId $tenantId = null,
-        private ?ProjectId $projectId = null
+        private ProjectId $projectId,
+        private ?TenantId $tenantId = null
     ) {
     }
 
@@ -222,10 +221,6 @@ class Auth implements Contract\Auth
 
     public function deleteUsers(iterable $uids, bool $forceDeleteEnabledUsers = false): DeleteUsersResult
     {
-        if (!($this->projectId instanceof ProjectId)) {
-            throw AuthError::missingProjectId('Batch user deletion cannot be performed.');
-        }
-
         $request = DeleteUsersRequest::withUids($this->projectId->value(), $uids, $forceDeleteEnabledUsers);
 
         $response = $this->client->deleteUsers(
