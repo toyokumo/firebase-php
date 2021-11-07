@@ -63,9 +63,9 @@ class Auth implements Contract\Auth
     ) {
     }
 
-    public function getUser(Uid|string $uid): UserRecord
+    public function getUser(\Stringable|string $uid): UserRecord
     {
-        $uid = $uid instanceof Uid ? (string) $uid : $uid;
+        $uid = (string) (new Uid((string) $uid));
 
         $userRecord = $this->getUsers([$uid])[$uid] ?? null;
 
@@ -78,11 +78,7 @@ class Auth implements Contract\Auth
 
     public function getUsers(array $uids): array
     {
-        $uids = \array_map(static function ($uid) {
-            $uid = $uid instanceof Uid ? $uid : new Uid($uid);
-
-            return (string) $uid;
-        }, $uids);
+        $uids = \array_map(static fn ($uid) => (string) (new Uid((string) $uid)), $uids);
 
         $users = \array_fill_keys($uids, null);
 
@@ -130,7 +126,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function updateUser(Uid|string $uid, array|Request\UpdateUser $properties): UserRecord
+    public function updateUser(\Stringable|string $uid, array|Request\UpdateUser $properties): UserRecord
     {
         $request = $properties instanceof Request\UpdateUser
             ? $properties
@@ -187,32 +183,32 @@ class Auth implements Contract\Auth
         return $this->createUser(Request\CreateUser::new());
     }
 
-    public function changeUserPassword(Uid|string $uid, ClearTextPassword|string $newPassword): UserRecord
+    public function changeUserPassword(\Stringable|string $uid, ClearTextPassword|string $newPassword): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withClearTextPassword($newPassword));
     }
 
-    public function changeUserEmail(Uid|string $uid, Email|string $newEmail): UserRecord
+    public function changeUserEmail(\Stringable|string $uid, Email|string $newEmail): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withEmail($newEmail));
     }
 
-    public function enableUser(Uid|string $uid): UserRecord
+    public function enableUser(\Stringable|string $uid): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->markAsEnabled());
     }
 
-    public function disableUser(Uid|string $uid): UserRecord
+    public function disableUser(\Stringable|string $uid): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->markAsDisabled());
     }
 
-    public function deleteUser(Uid|string $uid): void
+    public function deleteUser(\Stringable|string $uid): void
     {
-        $uid = $uid instanceof Uid ? $uid : new Uid($uid);
+        $uid = (string) (new Uid((string) $uid));
 
         try {
-            $this->client->deleteUser((string) $uid);
+            $this->client->deleteUser($uid);
         } catch (UserNotFound) {
             throw new UserNotFound("No user with uid '{$uid}' found.");
         }
@@ -232,7 +228,7 @@ class Auth implements Contract\Auth
         return DeleteUsersResult::fromRequestAndResponse($request, $response);
     }
 
-    public function getEmailActionLink(string $type, Email|string $email, array|ActionCodeSettings $actionCodeSettings = null): string
+    public function getEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -323,31 +319,31 @@ class Auth implements Contract\Auth
         $this->sendEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings, $locale);
     }
 
-    public function setCustomUserClaims(Uid|string $uid, ?array $claims): void
+    public function setCustomUserClaims(\Stringable|string $uid, ?array $claims): void
     {
-        $uid = $uid instanceof Uid ? (string) $uid : $uid;
+        $uid = (string) (new Uid((string) $uid));
         $claims ??= [];
 
         $this->client->setCustomUserClaims($uid, $claims);
     }
 
-    public function createCustomToken(Uid|string $uid, array $claims = []): Token
+    public function createCustomToken(\Stringable|string $uid, array $claims = []): Token
     {
-        $uid = $uid instanceof Uid ? $uid : new Uid($uid);
+        $uid = (string) (new Uid((string) $uid));
 
         return $this->tokenGenerator->createCustomToken($uid, $claims);
     }
 
-    public function parseToken(string $tokenString): Token
+    public function parseToken(\Stringable|string $token): Token
     {
         try {
-            return Configuration::forUnsecuredSigner()->parser()->parse($tokenString);
+            return Configuration::forUnsecuredSigner()->parser()->parse((string) $token);
         } catch (Throwable $e) {
             throw new InvalidArgumentException('The given token could not be parsed: '.$e->getMessage());
         }
     }
 
-    public function verifyIdToken($idToken, bool $checkIfRevoked = false): Token
+    public function verifyIdToken(Token|\Stringable|string $idToken, bool $checkIfRevoked = false): Token
     {
         $leewayInSeconds = 300;
         $verifier = $this->idTokenVerifier;
@@ -356,7 +352,9 @@ class Auth implements Contract\Auth
             $verifier = $verifier->withLeewayInSeconds($leewayInSeconds);
         }
 
-        $verifiedToken = $verifier->verifyIdToken($idToken);
+        $idTokenString = $idToken instanceof Token ? $idToken->toString() : (string) $idToken;
+
+        $verifiedToken = $verifier->verifyIdToken($idTokenString);
 
         if ($checkIfRevoked) {
             // @codeCoverageIgnoreStart
@@ -427,30 +425,31 @@ class Auth implements Contract\Auth
         return new Email($email);
     }
 
-    public function revokeRefreshTokens(Uid|string $uid): void
+    public function revokeRefreshTokens(\Stringable|string $uid): void
     {
-        $uid = $uid instanceof Uid ? $uid : new Uid($uid);
+        $uid = (string) (new Uid((string) $uid));
 
-        $this->client->revokeRefreshTokens((string) $uid);
+        $this->client->revokeRefreshTokens($uid);
     }
 
-    public function unlinkProvider(Uid|string $uid, array|string $provider): UserRecord
+    public function unlinkProvider(\Stringable|string $uid, array|string $provider): UserRecord
     {
-        $uid = $uid instanceof Uid ? $uid : new Uid($uid);
+        $uid = (string) (new Uid((string) $uid));
+
         $provider = \array_map(
             static fn ($provider) => $provider instanceof Provider ? $provider : new Provider($provider),
             (array) $provider
         );
 
-        $response = $this->client->unlinkProvider((string) $uid, $provider);
+        $response = $this->client->unlinkProvider($uid, $provider);
 
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function signInAsUser(UserRecord|Uid|string $user, ?array $claims = null): SignInResult
+    public function signInAsUser(UserRecord|\Stringable|string $user, ?array $claims = null): SignInResult
     {
         $claims ??= [];
-        $uid = $user instanceof UserRecord ? $user->uid : (string) $user;
+        $uid = (string) (new Uid($user instanceof UserRecord ? $user->uid : (string) $user));
 
         $customToken = $this->createCustomToken($uid, $claims);
 
@@ -620,10 +619,12 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function createSessionCookie(Token|string $idToken, DateInterval|int $ttl): string
+    public function createSessionCookie(Token|\Stringable|string $idToken, DateInterval|int $ttl): string
     {
+        $idTokenString = $idToken instanceof Token ? $idToken->toString() : (string) $idToken;
+
         return (new CreateSessionCookie\GuzzleApiClientHandler($this->httpClient))
-            ->handle(CreateSessionCookie::forIdToken($idToken, $ttl))
+            ->handle(CreateSessionCookie::forIdToken($idTokenString, $ttl))
         ;
     }
 

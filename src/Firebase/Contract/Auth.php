@@ -30,7 +30,6 @@ use Kreait\Firebase\Request;
 use Kreait\Firebase\Value\ClearTextPassword;
 use Kreait\Firebase\Value\Email;
 use Kreait\Firebase\Value\Provider;
-use Kreait\Firebase\Value\Uid;
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\UriInterface;
 use Traversable;
@@ -42,10 +41,10 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function getUser(Uid|string $uid): UserRecord;
+    public function getUser(\Stringable|string $uid): UserRecord;
 
     /**
-     * @param array<Uid|string> $uids
+     * @param array<\Stringable|string> $uids
      *
      * @throws Exception\FirebaseException
      * @throws Exception\AuthException
@@ -80,7 +79,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function updateUser(Uid|string $uid, array|Request\UpdateUser $properties): UserRecord;
+    public function updateUser(\Stringable|string $uid, array|Request\UpdateUser $properties): UserRecord;
 
     /**
      * @throws Exception\AuthException
@@ -111,35 +110,35 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function changeUserPassword(Uid|string $uid, ClearTextPassword|string $newPassword): UserRecord;
+    public function changeUserPassword(\Stringable|string $uid, ClearTextPassword|string $newPassword): UserRecord;
 
     /**
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function changeUserEmail(Uid|string $uid, Email|string $newEmail): UserRecord;
+    public function changeUserEmail(\Stringable|string $uid, Email|string $newEmail): UserRecord;
 
     /**
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function enableUser(Uid|string $uid): UserRecord;
+    public function enableUser(\Stringable|string $uid): UserRecord;
 
     /**
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function disableUser(Uid|string $uid): UserRecord;
+    public function disableUser(\Stringable|string $uid): UserRecord;
 
     /**
      * @throws UserNotFound
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function deleteUser(Uid|string $uid): void;
+    public function deleteUser(\Stringable|string $uid): void;
 
     /**
-     * @param iterable<Uid|string> $uids
+     * @param iterable<\Stringable|string> $uids
      * @param bool $forceDeleteEnabledUsers Whether to force deleting accounts that are not in disabled state. If false, only disabled accounts will be deleted, and accounts that are not disabled will be added to the errors.
      *
      * @throws Exception\AuthException
@@ -213,26 +212,26 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function setCustomUserClaims(Uid|string $uid, ?array $claims): void;
+    public function setCustomUserClaims(\Stringable|string $uid, ?array $claims): void;
 
     /**
      * @param array<string, mixed> $claims
      */
-    public function createCustomToken(Uid|string $uid, array $claims = []): Token;
+    public function createCustomToken(\Stringable|string $uid, array $claims = []): Token;
 
-    public function parseToken(string $tokenString): Token;
+    public function parseToken(\Stringable|string $token): Token;
 
     /**
      * Creates a new Firebase session cookie with the given lifetime.
      *
      * The session cookie JWT will have the same payload claims as the provided ID token.
      *
-     * @param Token|string $idToken The Firebase ID token to exchange for a session cookie
+     * @param Token|\Stringable|string $idToken The Firebase ID token to exchange for a session cookie
      *
      * @throws InvalidArgumentException if the token or TTL is invalid
      * @throws FailedToCreateSessionCookie
      */
-    public function createSessionCookie(Token|string $idToken, DateInterval|int $ttl): string;
+    public function createSessionCookie(Token|\Stringable|string $idToken, DateInterval|int $ttl): string;
 
     /**
      * Verifies a JWT auth token. Returns a Promise with the tokens claims. Rejects the promise if the token
@@ -245,7 +244,7 @@ interface Auth
      * for backwards compatibility reasons, and will be removed in the next major version. You
      * shouldn't rely on it.
      *
-     * @param Token|string $idToken the JWT to verify
+     * @param Token|\Stringable|string $idToken the JWT to verify
      * @param bool $checkIfRevoked whether to check if the ID token is revoked
      *
      * @throws InvalidArgumentException if the token could not be parsed
@@ -253,10 +252,10 @@ interface Auth
      * @throws InvalidSignature if the signature doesn't match
      * @throws ExpiredToken if the token is expired
      * @throws IssuedInTheFuture if the token is issued in the future
-     * @throws UnknownKey if the token's kid header doesnt' contain a known key
+     * @throws UnknownKey if the token's kid header doesn't contain a known key
      * @throws RevokedIdToken if the token has been revoked
      */
-    public function verifyIdToken(Token|string $idToken, bool $checkIfRevoked = false): Token;
+    public function verifyIdToken(Token|\Stringable|string $idToken, bool $checkIfRevoked = false): Token;
 
     /**
      * Verifies the given password reset code.
@@ -324,12 +323,12 @@ interface Auth
      * before revocation will also be revoked on the Auth backend. Any request with an
      * ID token generated before revocation will be rejected with a token expired error.
      *
-     * @param Uid|string $uid the user whose tokens are to be revoked
+     * @param \Stringable|string $uid the user whose tokens are to be revoked
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function revokeRefreshTokens(Uid|string $uid): void;
+    public function revokeRefreshTokens(\Stringable|string $uid): void;
 
     /**
      * @param Provider[]|string[]|string $provider
@@ -337,14 +336,14 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function unlinkProvider(Uid|string $uid, array|string $provider): UserRecord;
+    public function unlinkProvider(\Stringable|string $uid, array|string $provider): UserRecord;
 
     /**
      * @param array<string, mixed>|null $claims
      *
      * @throws FailedToSignIn
      */
-    public function signInAsUser(UserRecord|Uid|string $user, ?array $claims = null): SignInResult;
+    public function signInAsUser(UserRecord|\Stringable|string $user, ?array $claims = null): SignInResult;
 
     /**
      * @throws FailedToSignIn

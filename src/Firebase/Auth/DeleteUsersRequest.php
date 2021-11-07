@@ -10,19 +10,19 @@ use Kreait\Firebase\Value\Uid;
 final class DeleteUsersRequest
 {
     private const MAX_BATCH_SIZE = 1000;
-    /** @var string[] */
-    private array $uids;
 
     /**
      * @param string[] $uids
      */
-    private function __construct(private string $projectId, array $uids, private bool $enabledUsersShouldBeForceDeleted)
-    {
-        $this->uids = $uids;
+    private function __construct(
+        private string $projectId,
+        private array $uids,
+        private bool $enabledUsersShouldBeForceDeleted
+    ) {
     }
 
     /**
-     * @param iterable<Uid|string> $uids
+     * @param iterable<\Stringable|string> $uids
      */
     public static function withUids(string $projectId, iterable $uids, bool $forceDeleteEnabledUsers = false): self
     {
@@ -30,7 +30,7 @@ final class DeleteUsersRequest
         $count = 0;
 
         foreach ($uids as $uid) {
-            $validatedUids[] = (string) (\is_string($uid) ? new Uid(\trim($uid)) : $uid);
+            $validatedUids[] = (string) (new Uid((string) $uid));
             ++$count;
 
             if ($count > self::MAX_BATCH_SIZE) {

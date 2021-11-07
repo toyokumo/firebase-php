@@ -16,7 +16,7 @@ use Stringable;
  */
 trait EditUserTrait
 {
-    protected ?Uid $uid = null;
+    protected ?string $uid = null;
     protected ?Email $email = null;
     protected ?string $displayName = null;
     protected ?bool $emailIsVerified = null;
@@ -108,7 +108,7 @@ trait EditUserTrait
     public function withUid(Stringable|string $uid): static
     {
         $request = clone $this;
-        $request->uid = new Uid((string) $uid);
+        $request->uid = (string) new Uid((string) $uid);
 
         return $request;
     }
@@ -222,7 +222,7 @@ trait EditUserTrait
         }
 
         return \array_filter([
-            'localId' => $this->uid?->__toString(),
+            'localId' => $this->uid,
             'disableUser' => $disableUser,
             'displayName' => $this->displayName,
             'email' => $this->email?->__toString(),

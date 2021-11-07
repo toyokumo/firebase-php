@@ -6,7 +6,10 @@ namespace Kreait\Firebase\Value;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-class Uid implements \JsonSerializable, \Stringable
+/**
+ * @internal
+ */
+final class Uid implements \JsonSerializable, \Stringable
 {
     private string $value;
 
@@ -19,7 +22,7 @@ class Uid implements \JsonSerializable, \Stringable
             throw new InvalidArgumentException('A uid must be a non-empty string with at most 128 characters.');
         }
 
-        $this->value = $value;
+        $this->value = \trim($value);
     }
 
     public function __toString(): string
