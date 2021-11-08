@@ -45,22 +45,18 @@ final class CreateDynamicLink implements JsonSerializable
      * displaying a welcome screen). This link must be a well-formatted URL, be properly
      * URL-encoded, use either HTTP or HTTPS, and cannot be another Dynamic Link.
      */
-    public static function forUrl(string|UriInterface|Url $url): self
+    public static function forUrl(string|\Stringable|UriInterface $url): self
     {
-        $url = Url::fromValue((string) $url);
-
         $action = new self();
-        $action->data['dynamicLinkInfo']['link'] = (string) $url;
+        $action->data['dynamicLinkInfo']['link'] = (string) Url::fromValue((string) $url);
 
         return $action;
     }
 
-    public function withDynamicLinkDomain(string|Url|UriInterface $dynamicLinkDomain): self
+    public function withDynamicLinkDomain(string|\Stringable|UriInterface $dynamicLinkDomain): self
     {
-        $dynamicLinkDomain = Url::fromValue((string) $dynamicLinkDomain);
-
         $action = clone $this;
-        $action->data['dynamicLinkInfo']['domainUriPrefix'] = (string) $dynamicLinkDomain;
+        $action->data['dynamicLinkInfo']['domainUriPrefix'] = (string) Url::fromValue((string) $dynamicLinkDomain);
 
         return $action;
     }

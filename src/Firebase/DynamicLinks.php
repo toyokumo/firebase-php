@@ -15,7 +15,7 @@ use Psr\Http\Message\UriInterface;
 
 final class DynamicLinks implements Contract\DynamicLinks
 {
-    private ?Url $defaultDynamicLinksDomain = null;
+    private ?string $defaultDynamicLinksDomain = null;
 
     private function __construct(private ClientInterface $apiClient)
     {
@@ -26,12 +26,10 @@ final class DynamicLinks implements Contract\DynamicLinks
         return new self($apiClient);
     }
 
-    public static function withApiClientAndDefaultDomain(ClientInterface $apiClient, mixed $dynamicLinksDomain): self
+    public static function withApiClientAndDefaultDomain(ClientInterface $apiClient, string|\Stringable $dynamicLinksDomain): self
     {
-        $domainUrl = Url::fromValue($dynamicLinksDomain);
-
         $service = self::withApiClient($apiClient);
-        $service->defaultDynamicLinksDomain = $domainUrl;
+        $service->defaultDynamicLinksDomain = (string) Url::fromValue($dynamicLinksDomain);
 
         return $service;
     }

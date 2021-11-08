@@ -21,7 +21,7 @@ trait EditUserTrait
     protected ?string $displayName = null;
     protected ?bool $emailIsVerified = null;
     protected ?string $phoneNumber = null;
-    protected ?Url $photoUrl = null;
+    protected ?string $photoUrl = null;
     protected ?bool $markAsEnabled = null;
     protected ?bool $markAsDisabled = null;
     protected ?ClearTextPassword $clearTextPassword = null;
@@ -157,10 +157,10 @@ trait EditUserTrait
         return $request;
     }
 
-    public function withPhotoUrl(Url|string $url): static
+    public function withPhotoUrl(Stringable|string $url): static
     {
         $request = clone $this;
-        $request->photoUrl = $url instanceof Url ? $url : Url::fromValue($url);
+        $request->photoUrl = (string) Url::fromValue($url);
 
         return $request;
     }
@@ -228,7 +228,7 @@ trait EditUserTrait
             'email' => $this->email?->__toString(),
             'emailVerified' => $this->emailIsVerified,
             'phoneNumber' => $this->phoneNumber,
-            'photoUrl' => $this->photoUrl?->__toString(),
+            'photoUrl' => $this->photoUrl,
             'password' => $this->clearTextPassword?->__toString(),
         ], static fn ($value) => $value !== null);
     }

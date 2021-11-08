@@ -465,7 +465,7 @@ class Factory
         return new Messaging($projectId, $messagingApiClient, $appInstanceApiClient);
     }
 
-    public function createDynamicLinksService(mixed $defaultDynamicLinksDomain = null): Contract\DynamicLinks
+    public function createDynamicLinksService(string|\Stringable $defaultDynamicLinksDomain = null): Contract\DynamicLinks
     {
         $apiClient = $this->createApiClient();
 

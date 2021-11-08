@@ -9,6 +9,7 @@
 * The following classes have been marked internal and shouldn't be used directly, as they could be updated with
   breaking changes or get removed entirely in the future:
   * `Kreait\Firebase\Value\Uid`
+  * `Kreait\Firebase\Value\Url`
 
 ### Removed
 * Removed local phone number validation when `giggsey/libphonenumber-for-php` was installed. Phone numbers are

@@ -25,12 +25,10 @@ final class ShortenLongDynamicLink implements JsonSerializable
     /**
      * The long dynamic link that has been created as described in {@see https://firebase.google.com/docs/dynamic-links/create-manually}.
      */
-    public static function forLongDynamicLink(string|UriInterface|Url $url): self
+    public static function forLongDynamicLink(string|\Stringable|UriInterface $url): self
     {
-        $url = Url::fromValue((string) $url);
-
         $action = new self();
-        $action->data['longDynamicLink'] = (string) $url;
+        $action->data['longDynamicLink'] = (string) Url::fromValue($url);
 
         return $action;
     }
