@@ -38,10 +38,10 @@
     "require-dev": {
         "google/cloud-firestore": "^1.19.3",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^0.12.92",
-        "phpstan/phpstan-phpunit": "^0.12.21",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
         "phpunit/phpunit": "^9.5.10",
-        "rector/rector": "^0.11.57",
+        "rector/rector": "^0.12",
         "symfony/var-dumper": "^5.3.3",
         "symplify/easy-coding-standard": "^9.4"
     },
