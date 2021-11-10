@@ -150,7 +150,7 @@ interface Auth
      *
      * @throws FailedToCreateActionLink
      */
-    public function getEmailActionLink(string $type, Email|string $email, array|ActionCodeSettings $actionCodeSettings = null): string;
+    public function getEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
@@ -158,49 +158,49 @@ interface Auth
      * @throws UserNotFound
      * @throws FailedToSendActionLink
      */
-    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
+    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
+    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToCreateActionLink
      */
-    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string;
+    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string;
 
     /**
      * @param ActionCodeSettings|array<string, string|bool|null>|null $actionCodeSettings
      *
      * @throws FailedToSendActionLink
      */
-    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void;
+    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void;
 
     /**
      * Sets additional developer claims on an existing user identified by the provided UID.
@@ -383,10 +383,10 @@ interface Auth
      *
      * @throws FailedToSignIn
      */
-    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 
     /**
      * @throws FailedToSignIn
      */
-    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 }

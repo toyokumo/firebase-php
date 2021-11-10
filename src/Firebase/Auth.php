@@ -228,7 +228,7 @@ class Auth implements Contract\Auth
         return DeleteUsersResult::fromRequestAndResponse($request, $response);
     }
 
-    public function getEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
+    public function getEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -245,7 +245,7 @@ class Auth implements Contract\Auth
         ;
     }
 
-    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $email = $email instanceof Email ? $email : new Email($email);
 
@@ -289,32 +289,32 @@ class Auth implements Contract\Auth
         (new SendActionLink\GuzzleApiClientHandler($this->httpClient))->handle($sendAction);
     }
 
-    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
+    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings);
     }
 
-    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings, $locale);
     }
 
-    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
+    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings);
     }
 
-    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
+    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings, $locale);
     }
 
-    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null): string
+    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings);
     }
 
-    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array $actionCodeSettings = null, ?string $locale = null): void
+    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings, $locale);
     }
@@ -554,7 +554,7 @@ class Auth implements Contract\Auth
         return $this->signInWithIdpIdToken(Provider::APPLE, $idToken, $redirectUrl, $linkingIdToken, $rawNonce);
     }
 
-    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
         $provider = $provider instanceof Provider ? (string) $provider : $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
@@ -587,7 +587,7 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
         $provider = $provider instanceof Provider ? (string) $provider : $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
