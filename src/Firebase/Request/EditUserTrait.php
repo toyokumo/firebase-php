@@ -17,7 +17,7 @@ use Stringable;
 trait EditUserTrait
 {
     protected ?string $uid = null;
-    protected ?Email $email = null;
+    protected ?string $email = null;
     protected ?string $displayName = null;
     protected ?bool $emailIsVerified = null;
     protected ?string $phoneNumber = null;
@@ -113,27 +113,27 @@ trait EditUserTrait
         return $request;
     }
 
-    public function withEmail(Email|string $email): static
+    public function withEmail(Stringable|string $email): static
     {
         $request = clone $this;
-        $request->email = $email instanceof Email ? $email : new Email($email);
+        $request->email = (string) (new Email((string) $email));
 
         return $request;
     }
 
-    public function withVerifiedEmail(Email|string $email): static
+    public function withVerifiedEmail(Stringable|string $email): static
     {
         $request = clone $this;
-        $request->email = $email instanceof Email ? $email : new Email($email);
+        $request->email = (string) (new Email((string) $email));
         $request->emailIsVerified = true;
 
         return $request;
     }
 
-    public function withUnverifiedEmail(Email|string $email): static
+    public function withUnverifiedEmail(Stringable|string $email): static
     {
         $request = clone $this;
-        $request->email = $email instanceof Email ? $email : new Email($email);
+        $request->email = (string) (new Email((string) $email));
         $request->emailIsVerified = false;
 
         return $request;
@@ -225,7 +225,7 @@ trait EditUserTrait
             'localId' => $this->uid,
             'disableUser' => $disableUser,
             'displayName' => $this->displayName,
-            'email' => $this->email?->__toString(),
+            'email' => $this->email,
             'emailVerified' => $this->emailIsVerified,
             'phoneNumber' => $this->phoneNumber,
             'photoUrl' => $this->photoUrl,

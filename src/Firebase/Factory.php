@@ -75,7 +75,7 @@ class Factory
 
     protected ?ProjectId $projectId = null;
 
-    protected ?Email $clientEmail = null;
+    protected ?string $clientEmail = null;
 
     protected CacheInterface $verifierCache;
 
@@ -137,7 +137,7 @@ class Factory
     public function withClientEmail(string $clientEmail): self
     {
         $factory = clone $this;
-        $factory->clientEmail = new Email($clientEmail);
+        $factory->clientEmail = (string) (new Email($clientEmail));
 
         return $factory;
     }
@@ -313,7 +313,7 @@ class Factory
         throw new RuntimeException('Unable to determine the Firebase Project ID');
     }
 
-    protected function getClientEmail(): ?Email
+    protected function getClientEmail(): ?string
     {
         if ($this->clientEmail !== null) {
             return $this->clientEmail;
@@ -322,7 +322,7 @@ class Factory
         $serviceAccount = $this->getServiceAccount();
 
         if ($serviceAccount !== null) {
-            return $this->clientEmail = new Email($serviceAccount->getClientEmail());
+            return $this->clientEmail = $serviceAccount->getClientEmail();
         }
 
         if ($this->discoveryIsDisabled) {
@@ -335,7 +335,7 @@ class Factory
                 && ($credentials instanceof SignBlobInterface)
                 && ($clientEmail = $credentials->getClientName())
             ) {
-                return $this->clientEmail = new Email($clientEmail);
+                return $this->clientEmail = $clientEmail;
             }
         } catch (Throwable) {
             return null;
@@ -387,14 +387,14 @@ class Factory
 
         if ($clientEmail && $privateKey !== '') {
             if ($this->tenantId !== null) {
-                return new TenantAwareGenerator($this->tenantId->toString(), (string) $clientEmail, $privateKey);
+                return new TenantAwareGenerator($this->tenantId->toString(), $clientEmail, $privateKey);
             }
 
-            return new CustomTokenGenerator((string) $clientEmail, $privateKey);
+            return new CustomTokenGenerator($clientEmail, $privateKey);
         }
 
         if ($clientEmail !== null) {
-            return new CustomTokenViaGoogleIam((string) $clientEmail, $this->createApiClient(), $this->tenantId);
+            return new CustomTokenViaGoogleIam($clientEmail, $this->createApiClient(), $this->tenantId);
         }
 
         return new DisabledLegacyCustomTokenGenerator(

@@ -19,7 +19,7 @@ final class SendActionLink
         return $this->action->type();
     }
 
-    public function email(): Email
+    public function email(): string
     {
         return $this->action->email();
     }

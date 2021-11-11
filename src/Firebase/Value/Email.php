@@ -6,7 +6,10 @@ namespace Kreait\Firebase\Value;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-class Email implements \JsonSerializable, \Stringable
+/**
+ * @internal
+ */
+final class Email implements \JsonSerializable, \Stringable
 {
     private string $value;
 

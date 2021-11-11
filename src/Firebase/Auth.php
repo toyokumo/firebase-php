@@ -139,7 +139,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function createUserWithEmailAndPassword(Email|string $email, ClearTextPassword|string $password): UserRecord
+    public function createUserWithEmailAndPassword(\Stringable|string $email, ClearTextPassword|string $password): UserRecord
     {
         return $this->createUser(
             Request\CreateUser::new()
@@ -148,10 +148,8 @@ class Auth implements Contract\Auth
         );
     }
 
-    public function getUserByEmail(Email|string $email): UserRecord
+    public function getUserByEmail(\Stringable|string $email): UserRecord
     {
-        $email = $email instanceof Email ? $email : new Email($email);
-
         $response = $this->client->getUserByEmail((string) $email);
 
         $data = JSON::decode((string) $response->getBody(), true);
@@ -188,7 +186,7 @@ class Auth implements Contract\Auth
         return $this->updateUser($uid, Request\UpdateUser::new()->withClearTextPassword($newPassword));
     }
 
-    public function changeUserEmail(\Stringable|string $uid, Email|string $newEmail): UserRecord
+    public function changeUserEmail(\Stringable|string $uid, \Stringable|string $newEmail): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withEmail($newEmail));
     }
@@ -228,10 +226,8 @@ class Auth implements Contract\Auth
         return DeleteUsersResult::fromRequestAndResponse($request, $response);
     }
 
-    public function getEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
+    public function getEmailActionLink(string $type, \Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
-        $email = $email instanceof Email ? $email : new Email($email);
-
         if ($actionCodeSettings === null) {
             $actionCodeSettings = ValidatedActionCodeSettings::empty();
         } else {
@@ -245,10 +241,8 @@ class Auth implements Contract\Auth
         ;
     }
 
-    public function sendEmailActionLink(string $type, Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailActionLink(string $type, \Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
-        $email = $email instanceof Email ? $email : new Email($email);
-
         if ($actionCodeSettings === null) {
             $actionCodeSettings = ValidatedActionCodeSettings::empty();
         } else {
@@ -289,32 +283,32 @@ class Auth implements Contract\Auth
         (new SendActionLink\GuzzleApiClientHandler($this->httpClient))->handle($sendAction);
     }
 
-    public function getEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
+    public function getEmailVerificationLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings);
     }
 
-    public function sendEmailVerificationLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
+    public function sendEmailVerificationLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('VERIFY_EMAIL', $email, $actionCodeSettings, $locale);
     }
 
-    public function getPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
+    public function getPasswordResetLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings);
     }
 
-    public function sendPasswordResetLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
+    public function sendPasswordResetLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('PASSWORD_RESET', $email, $actionCodeSettings, $locale);
     }
 
-    public function getSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
+    public function getSignInWithEmailLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null): string
     {
         return $this->getEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings);
     }
 
-    public function sendSignInWithEmailLink(Email|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
+    public function sendSignInWithEmailLink(\Stringable|string $email, ActionCodeSettings|array|null $actionCodeSettings = null, ?string $locale = null): void
     {
         $this->sendEmailActionLink('EMAIL_SIGNIN', $email, $actionCodeSettings, $locale);
     }
@@ -395,13 +389,11 @@ class Auth implements Contract\Auth
         $this->verifyPasswordResetCodeAndReturnEmail($oobCode);
     }
 
-    public function verifyPasswordResetCodeAndReturnEmail(string $oobCode): Email
+    public function verifyPasswordResetCodeAndReturnEmail(string $oobCode): string
     {
         $response = $this->client->verifyPasswordResetCode($oobCode);
 
-        $email = JSON::decode((string) $response->getBody(), true)['email'];
-
-        return new Email($email);
+        return JSON::decode((string) $response->getBody(), true)['email'] ?? '';
     }
 
     public function confirmPasswordReset(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): void
@@ -410,7 +402,7 @@ class Auth implements Contract\Auth
         $this->confirmPasswordResetAndReturnEmail($oobCode, $newPassword, $invalidatePreviousSessions);
     }
 
-    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): Email
+    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): string
     {
         $newPassword = $newPassword instanceof ClearTextPassword ? $newPassword : new ClearTextPassword($newPassword);
 
@@ -422,7 +414,7 @@ class Auth implements Contract\Auth
             $this->revokeRefreshTokens($this->getUserByEmail($email)->uid);
         }
 
-        return new Email($email);
+        return $email;
     }
 
     public function revokeRefreshTokens(\Stringable|string $uid): void
@@ -486,9 +478,9 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithEmailAndPassword(Email|string $email, ClearTextPassword|string $clearTextPassword): SignInResult
+    public function signInWithEmailAndPassword(\Stringable|string $email, ClearTextPassword|string $clearTextPassword): SignInResult
     {
-        $email = $email instanceof Email ? (string) $email : $email;
+        $email = (string) (new Email((string) $email));
         $clearTextPassword = $clearTextPassword instanceof ClearTextPassword ? (string) $clearTextPassword : $clearTextPassword;
 
         $action = SignInWithEmailAndPassword::fromValues($email, $clearTextPassword);
@@ -500,9 +492,9 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithEmailAndOobCode(Email|string $email, string $oobCode): SignInResult
+    public function signInWithEmailAndOobCode(\Stringable|string $email, string $oobCode): SignInResult
     {
-        $email = $email instanceof Email ? (string) $email : $email;
+        $email = (string) (new Email((string) $email));
 
         $action = SignInWithEmailAndOobCode::fromValues($email, $oobCode);
 

@@ -11,12 +11,14 @@ final class CreateActionLink
 {
     private ?string $tenantId = null;
 
-    private function __construct(private string $type, private Email $email, private ActionCodeSettings $settings)
+    private function __construct(private string $type, private string $email, private ActionCodeSettings $settings)
     {
     }
 
-    public static function new(string $type, Email $email, ActionCodeSettings $settings, ?string $tenantId = null): self
+    public static function new(string $type, \Stringable|string $email, ActionCodeSettings $settings, ?string $tenantId = null): self
     {
+        $email = (string) (new Email((string) $email));
+
         $instance = new self($type, $email, $settings);
         $instance->tenantId = $tenantId;
 
@@ -28,7 +30,7 @@ final class CreateActionLink
         return $this->type;
     }
 
-    public function email(): Email
+    public function email(): string
     {
         return $this->email;
     }
