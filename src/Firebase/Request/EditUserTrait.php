@@ -24,7 +24,7 @@ trait EditUserTrait
     protected ?string $photoUrl = null;
     protected ?bool $markAsEnabled = null;
     protected ?bool $markAsDisabled = null;
-    protected ?ClearTextPassword $clearTextPassword = null;
+    protected ?string $clearTextPassword = null;
 
     /**
      * @param array<string, mixed> $properties
@@ -199,12 +199,10 @@ trait EditUserTrait
         return $request;
     }
 
-    public function withClearTextPassword(ClearTextPassword|string $clearTextPassword): static
+    public function withClearTextPassword(Stringable|string $clearTextPassword): static
     {
         $request = clone $this;
-        $request->clearTextPassword = $clearTextPassword instanceof ClearTextPassword
-            ? $clearTextPassword
-            : new ClearTextPassword($clearTextPassword);
+        $request->clearTextPassword = (string) (new ClearTextPassword((string) $clearTextPassword));
 
         return $request;
     }
@@ -229,7 +227,7 @@ trait EditUserTrait
             'emailVerified' => $this->emailIsVerified,
             'phoneNumber' => $this->phoneNumber,
             'photoUrl' => $this->photoUrl,
-            'password' => $this->clearTextPassword?->__toString(),
+            'password' => $this->clearTextPassword,
         ], static fn ($value) => $value !== null);
     }
 

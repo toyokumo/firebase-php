@@ -6,7 +6,10 @@ namespace Kreait\Firebase\Value;
 
 use Kreait\Firebase\Exception\InvalidArgumentException;
 
-class ClearTextPassword implements \JsonSerializable, \Stringable
+/**
+ * @internal
+ */
+final class ClearTextPassword implements \JsonSerializable, \Stringable
 {
     private string $value;
 

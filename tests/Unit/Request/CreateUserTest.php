@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Kreait\Firebase\Tests\Unit\Request;
 
 use Kreait\Firebase\Request\CreateUser;
-use Kreait\Firebase\Value\ClearTextPassword;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -130,7 +129,7 @@ final class CreateUserTest extends TestCase
                 $expected + ['password' => 'secret'],
             ],
             'clearTextPasswordObject' => [
-                $given + ['clearTextPassword' => new ClearTextPassword('secret')],
+                $given + ['clearTextPassword' => 'secret'],
                 $expected + ['password' => 'secret'],
             ],
         ];

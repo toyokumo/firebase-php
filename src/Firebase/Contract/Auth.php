@@ -27,7 +27,6 @@ use Kreait\Firebase\Exception\Auth\RevokedIdToken;
 use Kreait\Firebase\Exception\Auth\UserDisabled;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 use Kreait\Firebase\Request;
-use Kreait\Firebase\Value\ClearTextPassword;
 use Kreait\Firebase\Value\Provider;
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\UriInterface;
@@ -84,7 +83,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function createUserWithEmailAndPassword(\Stringable|string $email, ClearTextPassword|string $password): UserRecord;
+    public function createUserWithEmailAndPassword(\Stringable|string $email, \Stringable|string $password): UserRecord;
 
     /**
      * @throws UserNotFound
@@ -109,7 +108,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function changeUserPassword(\Stringable|string $uid, ClearTextPassword|string $newPassword): UserRecord;
+    public function changeUserPassword(\Stringable|string $uid, \Stringable|string $newPassword): UserRecord;
 
     /**
      * @throws Exception\AuthException
@@ -297,7 +296,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function confirmPasswordReset(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): void;
+    public function confirmPasswordReset(string $oobCode, \Stringable|string $newPassword, bool $invalidatePreviousSessions = true): void;
 
     /**
      * Applies the password reset requested via the given OOB code and returns the associated user's email address.
@@ -314,7 +313,7 @@ interface Auth
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): string;
+    public function confirmPasswordResetAndReturnEmail(string $oobCode, \Stringable|string $newPassword, bool $invalidatePreviousSessions = true): string;
 
     /**
      * Revokes all refresh tokens for the specified user identified by the uid provided.
@@ -357,7 +356,7 @@ interface Auth
     /**
      * @throws FailedToSignIn
      */
-    public function signInWithEmailAndPassword(\Stringable|string $email, string|ClearTextPassword $clearTextPassword): SignInResult;
+    public function signInWithEmailAndPassword(\Stringable|string $email, \Stringable|string $clearTextPassword): SignInResult;
 
     /**
      * @throws FailedToSignIn

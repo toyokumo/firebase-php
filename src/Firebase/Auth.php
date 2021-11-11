@@ -139,7 +139,7 @@ class Auth implements Contract\Auth
         return $this->getUserRecordFromResponse($response);
     }
 
-    public function createUserWithEmailAndPassword(\Stringable|string $email, ClearTextPassword|string $password): UserRecord
+    public function createUserWithEmailAndPassword(\Stringable|string $email, \Stringable|string $password): UserRecord
     {
         return $this->createUser(
             Request\CreateUser::new()
@@ -181,7 +181,7 @@ class Auth implements Contract\Auth
         return $this->createUser(Request\CreateUser::new());
     }
 
-    public function changeUserPassword(\Stringable|string $uid, ClearTextPassword|string $newPassword): UserRecord
+    public function changeUserPassword(\Stringable|string $uid, \Stringable|string $newPassword): UserRecord
     {
         return $this->updateUser($uid, Request\UpdateUser::new()->withClearTextPassword($newPassword));
     }
@@ -396,17 +396,17 @@ class Auth implements Contract\Auth
         return JSON::decode((string) $response->getBody(), true)['email'] ?? '';
     }
 
-    public function confirmPasswordReset(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): void
+    public function confirmPasswordReset(string $oobCode, \Stringable|string $newPassword, bool $invalidatePreviousSessions = true): void
     {
         // Not returning the email on purpose to not break BC
         $this->confirmPasswordResetAndReturnEmail($oobCode, $newPassword, $invalidatePreviousSessions);
     }
 
-    public function confirmPasswordResetAndReturnEmail(string $oobCode, ClearTextPassword|string $newPassword, bool $invalidatePreviousSessions = true): string
+    public function confirmPasswordResetAndReturnEmail(string $oobCode, \Stringable|string $newPassword, bool $invalidatePreviousSessions = true): string
     {
-        $newPassword = $newPassword instanceof ClearTextPassword ? $newPassword : new ClearTextPassword($newPassword);
+        $newPassword = (string) (new ClearTextPassword((string) $newPassword));
 
-        $response = $this->client->confirmPasswordReset($oobCode, (string) $newPassword);
+        $response = $this->client->confirmPasswordReset($oobCode, $newPassword);
 
         $email = JSON::decode((string) $response->getBody(), true)['email'];
 
@@ -478,10 +478,10 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithEmailAndPassword(\Stringable|string $email, ClearTextPassword|string $clearTextPassword): SignInResult
+    public function signInWithEmailAndPassword(\Stringable|string $email, \Stringable|string $clearTextPassword): SignInResult
     {
         $email = (string) (new Email((string) $email));
-        $clearTextPassword = $clearTextPassword instanceof ClearTextPassword ? (string) $clearTextPassword : $clearTextPassword;
+        $clearTextPassword = (string) (new ClearTextPassword((string) $clearTextPassword));
 
         $action = SignInWithEmailAndPassword::fromValues($email, $clearTextPassword);
 
