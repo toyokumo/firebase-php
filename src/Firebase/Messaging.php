@@ -23,7 +23,6 @@ use Kreait\Firebase\Messaging\MulticastSendReport;
 use Kreait\Firebase\Messaging\RegistrationToken;
 use Kreait\Firebase\Messaging\RegistrationTokens;
 use Kreait\Firebase\Messaging\Topic;
-use Kreait\Firebase\Project\ProjectId;
 use Kreait\Firebase\Util\JSON;
 
 /**
@@ -31,14 +30,11 @@ use Kreait\Firebase\Util\JSON;
  */
 final class Messaging implements Contract\Messaging
 {
-    private string $projectId;
-
     /**
      * @internal
      */
-    public function __construct(ProjectId $projectId, private ApiClient $messagingApi, private AppInstanceApiClient $appInstanceApi)
+    public function __construct(private string $projectId, private ApiClient $messagingApi, private AppInstanceApiClient $appInstanceApi)
     {
-        $this->projectId = $projectId->value();
     }
 
     public function send($message, bool $validateOnly = false): array
@@ -67,8 +63,8 @@ final class Messaging implements Contract\Messaging
         $registrationTokens = $this->ensureNonEmptyRegistrationTokens($registrationTokens);
 
         $request = new SendMessageToTokens($this->projectId, $message, $registrationTokens, $validateOnly);
-        /** @var ResponseWithSubResponses $response */
         $response = $this->messagingApi->send($request);
+        \assert($response instanceof ResponseWithSubResponses);
 
         return MulticastSendReport::fromRequestsAndResponses($request->subRequests(), $response->subResponses());
     }

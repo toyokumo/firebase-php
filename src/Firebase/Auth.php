@@ -33,7 +33,6 @@ use Kreait\Firebase\Auth\UserRecord;
 use Kreait\Firebase\Exception\Auth\RevokedIdToken;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 use Kreait\Firebase\Exception\InvalidArgumentException;
-use Kreait\Firebase\Project\ProjectId;
 use Kreait\Firebase\Util\DT;
 use Kreait\Firebase\Util\JSON;
 use Kreait\Firebase\Value\ClearTextPassword;
@@ -61,7 +60,7 @@ final class Auth implements Contract\Auth
         private TokenGenerator $tokenGenerator,
         private Verifier $idTokenVerifier,
         private SignInHandler $signInHandler,
-        private ProjectId $projectId,
+        private string $projectId,
         private ?TenantId $tenantId = null
     ) {
     }
@@ -217,7 +216,7 @@ final class Auth implements Contract\Auth
 
     public function deleteUsers(iterable $uids, bool $forceDeleteEnabledUsers = false): DeleteUsersResult
     {
-        $request = DeleteUsersRequest::withUids($this->projectId->value(), $uids, $forceDeleteEnabledUsers);
+        $request = DeleteUsersRequest::withUids($this->projectId, $uids, $forceDeleteEnabledUsers);
 
         $response = $this->client->deleteUsers(
             $request->projectId(),
