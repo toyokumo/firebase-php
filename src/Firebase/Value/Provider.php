@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Value;
 
-class Provider implements \JsonSerializable, \Stringable
+/**
+ * @codeCoverageIgnore
+ */
+final class Provider implements \JsonSerializable, \Stringable
 {
     public const ANONYMOUS = 'anonymous';
     public const CUSTOM = 'custom';

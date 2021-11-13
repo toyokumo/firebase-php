@@ -7,7 +7,6 @@ namespace Kreait\Firebase\Request;
 use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Request;
 use Kreait\Firebase\Util\JSON;
-use Kreait\Firebase\Value\Provider;
 
 final class UpdateUser implements Request
 {
@@ -20,7 +19,7 @@ final class UpdateUser implements Request
     /** @var array<string> */
     private array $attributesToDelete = [];
 
-    /** @var Provider[] */
+    /** @var string[] */
     private array $providersToDelete = [];
 
     /** @var array<string, mixed>|null */
@@ -119,12 +118,10 @@ final class UpdateUser implements Request
         return $request->withRemovedProvider('phone');
     }
 
-    public function withRemovedProvider(Provider|string $provider): self
+    public function withRemovedProvider(\Stringable|string $provider): self
     {
-        $provider = $provider instanceof Provider ? $provider : new Provider($provider);
-
         $request = clone $this;
-        $request->providersToDelete[] = $provider;
+        $request->providersToDelete[] = (string) $provider;
 
         return $request;
     }

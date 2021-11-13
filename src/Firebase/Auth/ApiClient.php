@@ -14,7 +14,6 @@ use Kreait\Firebase\Exception\AuthApiExceptionConverter;
 use Kreait\Firebase\Exception\AuthException;
 use Kreait\Firebase\Request;
 use Kreait\Firebase\Util\JSON;
-use Kreait\Firebase\Value\Provider;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -186,7 +185,7 @@ class ApiClient
     }
 
     /**
-     * @param array<int, string|Provider> $providers
+     * @param array<int, string> $providers
      *
      * @throws AuthException
      */

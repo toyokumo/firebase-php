@@ -424,14 +424,11 @@ class Auth implements Contract\Auth
         $this->client->revokeRefreshTokens($uid);
     }
 
-    public function unlinkProvider(\Stringable|string $uid, array|string $provider): UserRecord
+    public function unlinkProvider(\Stringable|string $uid, array|string|\Stringable $provider): UserRecord
     {
         $uid = (string) (new Uid((string) $uid));
 
-        $provider = \array_map(
-            static fn ($provider) => $provider instanceof Provider ? $provider : new Provider($provider),
-            (array) $provider
-        );
+        $provider = \array_map(static fn ($provider) => (string) $provider, (array) $provider);
 
         $response = $this->client->unlinkProvider($uid, $provider);
 
@@ -546,9 +543,9 @@ class Auth implements Contract\Auth
         return $this->signInWithIdpIdToken(Provider::APPLE, $idToken, $redirectUrl, $linkingIdToken, $rawNonce);
     }
 
-    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpAccessToken(\Stringable|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
-        $provider = $provider instanceof Provider ? (string) $provider : $provider;
+        $provider = (string) $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
         $linkingIdToken = \trim((string) $linkingIdToken);
         $oauthTokenSecret = \trim((string) $oauthTokenSecret);
@@ -579,9 +576,9 @@ class Auth implements Contract\Auth
         return $this->signInHandler->handle($action);
     }
 
-    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
+    public function signInWithIdpIdToken(\Stringable|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult
     {
-        $provider = $provider instanceof Provider ? (string) $provider : $provider;
+        $provider = (string) $provider;
         $redirectUrl = \trim((string) ($redirectUrl ?? 'http://localhost'));
         $linkingIdToken = \trim((string) $linkingIdToken);
         $rawNonce = \trim((string) $rawNonce);

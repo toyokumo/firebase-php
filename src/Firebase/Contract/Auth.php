@@ -27,7 +27,6 @@ use Kreait\Firebase\Exception\Auth\RevokedIdToken;
 use Kreait\Firebase\Exception\Auth\UserDisabled;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 use Kreait\Firebase\Request;
-use Kreait\Firebase\Value\Provider;
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\UriInterface;
 use Traversable;
@@ -329,12 +328,12 @@ interface Auth
     public function revokeRefreshTokens(\Stringable|string $uid): void;
 
     /**
-     * @param Provider[]|string[]|string $provider
+     * @param string[]|\Stringable[]|string|\Stringable $provider
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
      */
-    public function unlinkProvider(\Stringable|string $uid, array|string $provider): UserRecord;
+    public function unlinkProvider(\Stringable|string $uid, array|string|\Stringable $provider): UserRecord;
 
     /**
      * @param array<string, mixed>|null $claims
@@ -381,10 +380,10 @@ interface Auth
      *
      * @throws FailedToSignIn
      */
-    public function signInWithIdpAccessToken(Provider|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpAccessToken(\Stringable|string $provider, string $accessToken, UriInterface|string|null $redirectUrl = null, ?string $oauthTokenSecret = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 
     /**
      * @throws FailedToSignIn
      */
-    public function signInWithIdpIdToken(Provider|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
+    public function signInWithIdpIdToken(\Stringable|string $provider, Token|string $idToken, UriInterface|string|null $redirectUrl = null, ?string $linkingIdToken = null, ?string $rawNonce = null): SignInResult;
 }

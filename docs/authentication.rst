@@ -251,7 +251,7 @@ Sign In with IdP credentials
 
 IdP (Identitiy Provider) credentials are credentials provided by authentication providers other than Firebase,
 for example Facebook, Github, Google or Twitter. You can find the currently supported authentication providers
-in the constants of `https://github.com/kreait/firebase-php/blob/5.x/src/Firebase/Value/Provider.php <https://github.com/kreait/firebase-php/blob/5.x/src/Firebase/Value/Provider.php>`_
+in the constants of `https://github.com/kreait/firebase-php/blob/6.x/src/Firebase/Value/Provider.php <https://github.com/kreait/firebase-php/blob/6.x/src/Firebase/Value/Provider.php>`_
 
 This could be useful if you already have "Sign in with X" implemented in your application, and want to
 authenticate the same user with Firebase.
