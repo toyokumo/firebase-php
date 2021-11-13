@@ -47,7 +47,10 @@ use Psr\Http\Message\UriInterface;
 use Throwable;
 use Traversable;
 
-class Auth implements Contract\Auth
+/**
+ * @internal
+ */
+final class Auth implements Contract\Auth
 {
     /**
      * @internal

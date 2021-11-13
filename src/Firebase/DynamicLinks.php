@@ -13,6 +13,9 @@ use Kreait\Firebase\DynamicLink\ShortenLongDynamicLink;
 use Kreait\Firebase\Value\Url;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @internal
+ */
 final class DynamicLinks implements Contract\DynamicLinks
 {
     private ?string $defaultDynamicLinksDomain = null;

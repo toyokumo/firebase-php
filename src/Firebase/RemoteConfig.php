@@ -14,7 +14,10 @@ use Kreait\Firebase\Util\JSON;
 use Psr\Http\Message\ResponseInterface;
 use Traversable;
 
-class RemoteConfig implements Contract\RemoteConfig
+/**
+ * @internal
+ */
+final class RemoteConfig implements Contract\RemoteConfig
 {
     /**
      * @internal

@@ -26,7 +26,10 @@ use Kreait\Firebase\Messaging\Topic;
 use Kreait\Firebase\Project\ProjectId;
 use Kreait\Firebase\Util\JSON;
 
-class Messaging implements Contract\Messaging
+/**
+ * @internal
+ */
+final class Messaging implements Contract\Messaging
 {
     private string $projectId;
 
