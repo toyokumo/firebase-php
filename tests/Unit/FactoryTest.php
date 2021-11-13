@@ -57,7 +57,7 @@ final class FactoryTest extends UnitTestCase
         $uri = new Uri('http://domain.tld/');
 
         $database = (new Factory())
-            ->withServiceAccount($this->validServiceAccount)
+            ->withServiceAccount($this->validServiceAccount->asArray())
             ->withDatabaseUri($uri)
             ->createDatabase()
         ;
@@ -71,7 +71,7 @@ final class FactoryTest extends UnitTestCase
     public function testItAcceptsACustomDefaultStorageBucket(): void
     {
         $storage = (new Factory())
-            ->withServiceAccount($this->validServiceAccount)
+            ->withServiceAccount($this->validServiceAccount->asArray())
             ->withDefaultStorageBucket('foo')
             ->createStorage()
         ;
@@ -121,7 +121,7 @@ final class FactoryTest extends UnitTestCase
 
     public function testItAcceptsAServiceAccount(): void
     {
-        (new Factory())->withServiceAccount($this->validServiceAccount);
+        (new Factory())->withServiceAccount($this->validServiceAccount->asArray());
         $this->addToAssertionCount(1);
     }
 
@@ -191,7 +191,7 @@ final class FactoryTest extends UnitTestCase
     public function testAProjectIdCanBeProvidedViaAServiceAccount(): void
     {
         // The database component requires a project ID
-        (new Factory())->withServiceAccount($this->validServiceAccount)->createDatabase();
+        (new Factory())->withServiceAccount($this->validServiceAccount->asArray())->createDatabase();
         $this->addToAssertionCount(1);
     }
 

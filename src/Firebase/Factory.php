@@ -111,9 +111,9 @@ class Factory
     }
 
     /**
-     * @param string|array<string, string>|ServiceAccount $value
+     * @param string|array<string, string> $value
      */
-    public function withServiceAccount(string|array|ServiceAccount $value): self
+    public function withServiceAccount(string|array $value): self
     {
         $serviceAccount = ServiceAccount::fromValue($value);
 

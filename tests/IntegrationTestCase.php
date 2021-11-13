@@ -34,7 +34,7 @@ abstract class IntegrationTestCase extends FirebaseTestCase
 
         self::$serviceAccount = $credentials;
 
-        self::$factory = (new Factory())->withServiceAccount(self::$serviceAccount);
+        self::$factory = (new Factory())->withServiceAccount(self::$serviceAccount->asArray());
 
         self::$registrationTokens = self::registrationTokensFromEnvironment() ?? self::registrationTokensFromFile() ?? [];
     }
