@@ -21,7 +21,7 @@ class CustomTokenViaGoogleIam implements Generator
 {
     private Configuration $config;
 
-    public function __construct(private string $clientEmail, private ClientInterface $client, private ?TenantId $tenantId = null)
+    public function __construct(private string $clientEmail, private ClientInterface $client, private ?string $tenantId = null)
     {
         $this->config = Configuration::forUnsecuredSigner();
     }
@@ -50,7 +50,7 @@ class CustomTokenViaGoogleIam implements Generator
         ;
 
         if ($this->tenantId !== null) {
-            $builder->withClaim('tenantId', $this->tenantId->toString());
+            $builder->withClaim('tenantId', $this->tenantId);
         }
 
         if (!empty($claims)) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Kreait\Firebase\Tests\Integration\Auth;
 
 use Kreait\Firebase\Auth\CustomTokenViaGoogleIam;
-use Kreait\Firebase\Auth\TenantId;
 use Kreait\Firebase\Exception\AuthException;
 use Kreait\Firebase\Tests\IntegrationTestCase;
 use Lcobucci\JWT\Token\Plain;
@@ -54,12 +53,12 @@ final class CustomTokenViaGoogleIamTest extends IntegrationTestCase
         $generator = new CustomTokenViaGoogleIam(
             self::$serviceAccount->getClientEmail(),
             self::$factory->createApiClient(),
-            TenantId::fromString($tenantId = IntegrationTestCase::TENANT_ID)
+            IntegrationTestCase::TENANT_ID
         );
 
         $customToken = $generator->createCustomToken('some-uid');
 
         $this->assertInstanceOf(Plain::class, $customToken);
-        $this->assertSame($tenantId, $customToken->claims()->get('tenantId'));
+        $this->assertSame(IntegrationTestCase::TENANT_ID, $customToken->claims()->get('tenantId'));
     }
 }

@@ -27,7 +27,7 @@ class ApiClient
     /**
      * @internal
      */
-    public function __construct(private ClientInterface $client, private ?TenantId $tenantId = null)
+    public function __construct(private ClientInterface $client, private ?string $tenantId = null)
     {
         $this->errorHandler = new AuthApiExceptionConverter();
     }
@@ -205,10 +205,8 @@ class ApiClient
     private function requestApi(string $uri, array $data): ResponseInterface
     {
         $options = [];
-        $tenantId = $data['tenantId'] ?? $this->tenantId ?? null;
-        $tenantId = $tenantId instanceof TenantId ? $tenantId->toString() : $tenantId;
 
-        if ($tenantId) {
+        if (($tenantId = $data['tenantId'] ?? $this->tenantId) !== null) {
             $data['tenantId'] = $tenantId;
         }
 

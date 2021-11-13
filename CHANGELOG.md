@@ -37,5 +37,6 @@
   * `Factory::withEnabledDebug()`, use `Factory::withHttpDebugLogger()` instead
 * Removed deprecated/obsolete internal classes and methods
   * `Kreait\Firebase\Project\ProjectId`
+  * `Kreait\Firebase\Project\TenantId`
 
 [Unreleased]: https://github.com/kreait/firebase-php/compare/5.x...6.x
